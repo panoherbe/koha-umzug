@@ -1,0 +1,13 @@
+Testumgebung beim Messlauf 2026-11-17, geschrieben von nachweis/messlauf.sh
+Koha-Container: kohaumzug-koha-1, Image koha/koha-testing:26.05
+Image-ID: sha256:181bfeb170b8fb5c71c307d35a93d573037def2a8891875ad1a0d2730f07950d
+Image-Digest: koha/koha-testing@sha256:de1ce2b4153f2274867febc79c79a31ae74572ab7a36b660765480b5d209d843
+Image-Größe: 5181356437 Bytes
+Koha-Quellcode /kohadevbox/koha (du -sB1): 989716480 Bytes
+Koha-Version (Koha.pm): 26.05.05.000
+Arbeitsspeicher nach dem Messlauf, Koha geladen (docker stats):
+kohaumzug-koha-1: 1.742GiB / 62.43GiB
+kohaumzug-db-1: 189.6MiB / 62.43GiB
+kohaumzug-memcached-1: 11.75MiB / 62.43GiB
+Start vor dem Messlauf (Ausgabe von koha/testumgebung.sh):
+  Koha läuft: Container kohaumzug-koha-1, Koha 26.05.05.000, nach 89 s

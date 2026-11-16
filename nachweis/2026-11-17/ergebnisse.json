@@ -1,6 +1,6 @@
 {
- "datum": "2026-11-16",
- "commit": "81b7e5fe51c7f189bd7623c3fc9be563eb5110f1",
+ "datum": "2026-11-17",
+ "commit": "694725c5b7f45e2cb96424ca180c318baf64fffa",
  "arbeitsbaum_sauber": true,
  "koha": "26.05.05.000 (aus Koha.pm; koha-testing-docker, Image 26.05)",
  "quelle": {
@@ -51,7 +51,7 @@
   "gesetzt": 6388,
   "ohne_koha_normsatz": 0
  },
- "laden_s": 76.2,
+ "laden_s": 57.3,
  "pruefen_s": 4.7,
  "abweichungen_nach_umzug": 0,
  "pdf_geprueft": {
@@ -67,5 +67,5 @@
   "hinweis": "simuliert"
  },
  "abweichungen_nach_neuladen": 0,
- "tests": "25 passed in 5.83s"
+ "tests": "33 passed in 6.41s"
 }

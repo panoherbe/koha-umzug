@@ -1,0 +1,10 @@
+[00:46:16] Testumgebung geleert
+[00:46:16] Grundeinstellungen gesetzt
+[00:46:27] Normdaten geladen  {"anzahl": 2787}
+[00:46:27] Normdatenverknüpfungen gesetzt  {"gesetzt": 6388, "fehlt": 0}
+[00:47:00] Titel und Exemplare geladen  {"titel": 1621, "exemplare": 1881}
+[00:47:05] Benutzer geladen  {"anzahl": 120}
+[00:47:05] Ausleihen geladen  {"laufend": 90, "historie": 800}
+[00:47:06] PDF-Dateien geladen  {"anzahl": 40}
+[00:47:12] Suchindex neu aufgebaut
+[00:47:13] fertig  {"dauer_s": 57.3}

@@ -1,6 +1,6 @@
-# Messprotokoll 16.11.2026
+# Messprotokoll 17.11.2026
 
-Erzeugt von `nachweis/messlauf.sh` mit `nachweis/protokoll.py` aus den Dateien in diesem Ordner; jede Zahl steht dort maschinenlesbar. Commit `81b7e5f` (Code ohne ungespeicherte Änderungen: ja) · Koha 26.05.05.000 (aus Koha.pm; koha-testing-docker, Image 26.05) · ein Rechner (Linux, Docker).
+Erzeugt von `nachweis/messlauf.sh` mit `nachweis/protokoll.py` aus den Dateien in diesem Ordner; jede Zahl steht dort maschinenlesbar. Commit `694725c` (Code ohne ungespeicherte Änderungen: ja) · Koha 26.05.05.000 (aus Koha.pm; koha-testing-docker, Image 26.05) · ein Rechner (Linux, Docker).
 
 Katalogdaten: Deutsche Nationalbibliothek (CC0). **Simuliert:** Exemplare, Benutzer (erfundene Namen, Adressen @example.org), Ausleihen, Ausleihhistorie, PDF-Dateien, die eingebauten Datenfehler und die Fehlerprobe.
 
@@ -11,7 +11,8 @@ Katalogdaten: Deutsche Nationalbibliothek (CC0). **Simuliert:** Exemplare, Benut
 3. `umzug laden --leeren`: Beispieldaten der Testumgebung entfernt, dann alles geladen (`laden.log`, `laden.json`).
 4. `umzug pruefen alle` mit Anmeldung an der Dienstoberfläche (`pruefbericht/`).
 5. `umzug.fehlerprobe`: Fehler eingebaut, alle Werkzeuge erneut (`fehlerprobe.json`, `fehlerprobe-bericht/`).
-6. erneut geladen und geprüft (`nach-neuladen/`), dann `pytest` (`tests.txt`).
+6. erneut geladen (`laden-wieder.log`, `laden-wieder.json`) und geprüft (`nach-neuladen/`), dann `pytest` (`tests.txt`).
+7. die Testumgebung festgehalten: Image mit Digest, Platz, Arbeitsspeicher (`testumgebung.txt`).
 
 ## Ergebnis
 
@@ -31,16 +32,16 @@ Katalogdaten: Deutsche Nationalbibliothek (CC0). **Simuliert:** Exemplare, Benut
 
 - Normdatenverknüpfungen gesetzt: 6.388, ohne Koha-Normsatz: 0.
 - Werte mit zerlegten Zeichen (NFD) auf NFC gebracht: 4.272.
-- Laden (alles, mit Suchindex): 76,2 s. Prüfen (vier Werkzeuge): 4,7 s.
+- Laden (alles, mit Suchindex): 57,3 s, von außen gemessen mit dem Start von Python (`laden.json` vom ersten Laden nennt 57,3 s im Werkzeug, `laden-wieder.json` vom zweiten 55,8 s). Prüfen (vier Werkzeuge): 4,7 s.
 - Abweichungen nach dem Umzug: **0**. Nach dem erneuten Laden: 0.
 - PDF: 40 geprüft, 30 öffentlich abrufbar und unverändert, 10 intern von außen nicht abrufbar, davon 10 mit Anmeldung abgerufen und unverändert.
-- Tests: 25 passed in 5.83s.
+- Tests: 33 passed in 6.41s.
 
 ## Klärfälle (eingebaut, simuliert) und Entscheidung
 
 | Klärfall | Anzahl | Entscheidung | Menge |
 |---|---|---|---|
-| Zugangsdatum unbekannt | 5 | übernommen ohne Zugangsdatum | Datensatz übernommen |
+| Zugangsdatum unbekannt | 5 | freigegeben: ohne Zugangsdatum übernehmen | Datensatz übernommen |
 | Barcode doppelt | 1 | freigegeben: zweites Exemplar erhält Suffix -2, Etikett wird neu gedruckt | Datensatz übernommen |
 | Exemplar ohne Titel | 1 | freigegeben: weglassen, Liste geht an die Bibliothek | Datensatz weggelassen |
 | Feld ohne Zuordnung | 1 | freigegeben: als Fußnote 500 übernehmen | Datensatz übernommen |
@@ -78,6 +79,6 @@ Dazu 26 Folgeabweichungen: Meldungen, die dieselben Änderungen nach sich ziehen
 ## Grenzen dieser Messung
 
 - Ein Rechner, Testumgebung koha-testing-docker; die Zeiten gelten für diesen Bestand (1.621 Titel), nicht für mehrere zehntausend Titel.
-- Laden ist nur in der Testumgebung gemessen; auf einem Koha-Server werden Pfade und Rechte in der Analyse festgelegt.
+- Laden ist heute nur für die Testumgebung eingerichtet; auf einem Koha-Server laufen bisher die Prüfwerkzeuge (nicht gemessen).
 - Rückgabe und Verlängerung nach dem Laden sind nicht automatisch geprüft; die Ausleihen stehen mit Fälligkeit und Verlängerungen in Koha (Werkzeug `ausleihen`).
 - Suchindex Zebra; Elasticsearch nicht gemessen.

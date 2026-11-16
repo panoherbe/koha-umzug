@@ -1,6 +1,6 @@
 {
  "werkzeug": "mengen",
- "zeit": "2026-11-16T23:12:35+01:00",
+ "zeit": "2026-11-17T00:47:29+01:00",
  "ergebnis": {
   "bestaende": [
    {
@@ -16,10 +16,10 @@
     "bestand": "exemplare",
     "quelle": 1882,
     "erwartet": 1881,
-    "koha": 1881,
-    "fehlt": 0,
+    "koha": 1880,
+    "fehlt": 1,
     "zusaetzlich": 0,
-    "ok": true
+    "ok": false
    },
    {
     "bestand": "personen",
@@ -43,19 +43,19 @@
     "bestand": "schlagwoerter",
     "quelle": 1368,
     "erwartet": 1368,
-    "koha": 1368,
-    "fehlt": 0,
+    "koha": 1367,
+    "fehlt": 1,
     "zusaetzlich": 0,
-    "ok": true
+    "ok": false
    },
    {
     "bestand": "benutzer",
     "quelle": 120,
     "erwartet": 120,
-    "koha": 120,
-    "fehlt": 0,
+    "koha": 119,
+    "fehlt": 1,
     "zusaetzlich": 0,
-    "ok": true
+    "ok": false
    },
    {
     "bestand": "ausleihen",
@@ -90,5 +90,27 @@
    "Ausleihe ohne Benutzer": 1
   }
  },
- "abweichungen": []
+ "abweichungen": [
+  {
+   "werkzeug": "mengen",
+   "bereich": "exemplare",
+   "objekt": "000001053",
+   "erwartet": "in Koha",
+   "gefunden": "fehlt"
+  },
+  {
+   "werkzeug": "mengen",
+   "bereich": "schlagwoerter",
+   "objekt": "000000149",
+   "erwartet": "in Koha",
+   "gefunden": "fehlt"
+  },
+  {
+   "werkzeug": "mengen",
+   "bereich": "benutzer",
+   "objekt": "A100006",
+   "erwartet": "in Koha",
+   "gefunden": "fehlt"
+  }
+ ]
 }
