@@ -2,8 +2,8 @@
 
     python nachweis/protokoll.py nachweis/<Datum>
 
-Reads ergebnisse.json, pruefbericht/mengen.json, klaerfaelle.csv and fehlerprobe.json in that folder. Every number in
-the protocol comes from these files; nothing in it is typed by hand.
+Reads ergebnisse.json, laden.json, laden-wieder.json, pruefbericht/mengen.json, klaerfaelle.csv and fehlerprobe.json
+in that folder. Every number in the protocol comes from these files; nothing in it is typed by hand.
 """
 from __future__ import annotations
 
@@ -31,6 +31,8 @@ def protokoll(n: Path) -> str:
     e = json.loads((n / "ergebnisse.json").read_text(encoding="utf-8"))
     mengen = json.loads((n / "pruefbericht" / "mengen.json").read_text(encoding="utf-8"))["ergebnis"]["bestaende"]
     fp = json.loads((n / "fehlerprobe.json").read_text(encoding="utf-8"))
+    laden = json.loads((n / "laden.json").read_text(encoding="utf-8"))
+    wieder = json.loads((n / "laden-wieder.json").read_text(encoding="utf-8"))
     with open(n / "klaerfaelle.csv", encoding="utf-8", newline="") as fh:
         klaer = list(csv.DictReader(fh, delimiter=";"))
     j, m, t = e["datum"].split("-")
@@ -49,7 +51,9 @@ def protokoll(n: Path) -> str:
          "`laden.json`).",
          "4. `umzug pruefen alle` mit Anmeldung an der Dienstoberfläche (`pruefbericht/`).",
          "5. `umzug.fehlerprobe`: Fehler eingebaut, alle Werkzeuge erneut (`fehlerprobe.json`, `fehlerprobe-bericht/`).",
-         "6. erneut geladen und geprüft (`nach-neuladen/`), dann `pytest` (`tests.txt`).", "",
+         "6. erneut geladen (`laden-wieder.log`, `laden-wieder.json`) und geprüft (`nach-neuladen/`), dann `pytest` "
+         "(`tests.txt`).",
+         "7. die Testumgebung festgehalten: Image mit Digest, Platz, Arbeitsspeicher (`testumgebung.txt`).", "",
          "## Ergebnis", "",
          "| Bestand | Alephino-Export | erwartet nach Freigaben | in Koha |", "|---|---|---|---|"]
     for b in mengen:
@@ -64,7 +68,9 @@ def protokoll(n: Path) -> str:
           "",
           f"- Normdatenverknüpfungen gesetzt: {zahl(v['gesetzt'])}, ohne Koha-Normsatz: {zahl(v['ohne_koha_normsatz'])}.",
           f"- Werte mit zerlegten Zeichen (NFD) auf NFC gebracht: {zahl(e['nfc_korrigiert'])}.",
-          f"- Laden (alles, mit Suchindex): {komma(e['laden_s'])} s. Prüfen (vier Werkzeuge): {komma(e['pruefen_s'])} s.",
+          f"- Laden (alles, mit Suchindex): {komma(e['laden_s'])} s, von außen gemessen mit dem Start von Python "
+          f"(`laden.json` vom ersten Laden nennt {komma(laden['dauer_s'])} s im Werkzeug, `laden-wieder.json` vom "
+          f"zweiten {komma(wieder['dauer_s'])} s). Prüfen (vier Werkzeuge): {komma(e['pruefen_s'])} s.",
           f"- Abweichungen nach dem Umzug: **{e['abweichungen_nach_umzug']}**. Nach dem erneuten Laden: "
           f"{e['abweichungen_nach_neuladen']}.",
           f"- PDF: {p['pdf']} geprüft, {p['oeffentlich']} öffentlich abrufbar und unverändert, {p['intern']} intern von "
@@ -93,8 +99,8 @@ def protokoll(n: Path) -> str:
     z += ["", "## Grenzen dieser Messung", "",
           f"- Ein Rechner, Testumgebung koha-testing-docker; die Zeiten gelten für diesen Bestand ({zahl(titel)} Titel), "
           "nicht für mehrere zehntausend Titel.",
-          "- Laden ist nur in der Testumgebung gemessen; auf einem Koha-Server werden Pfade und Rechte in der Analyse "
-          "festgelegt.",
+          "- Laden ist heute nur für die Testumgebung eingerichtet; auf einem Koha-Server laufen bisher die "
+          "Prüfwerkzeuge (nicht gemessen).",
           "- Rückgabe und Verlängerung nach dem Laden sind nicht automatisch geprüft; die Ausleihen stehen mit "
           "Fälligkeit und Verlängerungen in Koha (Werkzeug `ausleihen`).",
           "- Suchindex Zebra; Elasticsearch nicht gemessen.", ""]

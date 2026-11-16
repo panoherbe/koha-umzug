@@ -1,6 +1,7 @@
 import csv
 import hashlib
 import json
+from pathlib import Path
 
 import pytest
 from pymarc import MARCReader
@@ -8,6 +9,8 @@ from pymarc import MARCReader
 from umzug.koha import Koha
 from umzug.laden import laden
 from umzug.umwandeln import umwandeln
+
+WURZEL = Path(__file__).resolve().parents[1]
 
 
 def test_mengen_und_freigaben(beispiel):
@@ -44,11 +47,19 @@ def test_laden_verweigert_offene_klaerfaelle(beispiel, tmp_path):
         laden(tmp_path / "x", export, KeinKoha(container="test"), "http://opac", "http://dienst", False, None)
 
 
-def test_leeren_nur_in_der_testumgebung(beispiel):
+@pytest.mark.parametrize("zugang", [dict(sql_befehl="koha-mysql x"), dict(container="test", sql_befehl="koha-mysql x"),
+                                    dict(container="test", shell_befehl="koha-shell x -c")])
+def test_leeren_nur_in_der_testumgebung(beispiel, zugang):
+    """--leeren cannot be pointed at a server, not even with --container next to --sql or --shell."""
     export, ziel, _prot = beispiel
     with pytest.raises(SystemExit, match="nur mit --container"):
-        laden(ziel, export, KeinKoha(sql_befehl="koha-mysql x", shell_befehl="koha-shell x -c"), "http://opac",
-              "http://dienst", True, None)
+        laden(ziel, export, KeinKoha(**zugang), "http://opac", "http://dienst", True, None)
+
+
+def test_laden_nur_in_der_testumgebung(beispiel):
+    export, ziel, _prot = beispiel
+    with pytest.raises(SystemExit, match="nur für die Testumgebung"):
+        laden(ziel, export, KeinKoha(sql_befehl="koha-mysql x"), "http://opac", "http://dienst", False, None)
 
 
 def test_barcodes_eindeutig_und_ausgabe_utf8_nfc(beispiel):
@@ -82,5 +93,20 @@ def test_klaerfaelle_dokumentiert(beispiel):
         gefunden = {z["art"] for z in csv.DictReader(fh, delimiter=";")}
     erwartet = {"Barcode doppelt", "Exemplar ohne Titel", "Ausleihe ohne Benutzer", "Feld ohne Zuordnung",
                 "Normdatenverknüpfung ins Leere", "Zugangsdatum unbekannt"}
-    assert erwartet <= gefunden
+    assert erwartet == gefunden
     assert len(eingebaut) == 6
+
+
+def test_unbekannte_werte_werden_klaerfaelle(beispiel, tmp_path):
+    """A location, item type, status or patron group outside umzug/werte.py is a Klärfall, not a silent default."""
+    import shutil
+    export, _ziel, _prot = beispiel
+    kopie = tmp_path / "export"
+    shutil.copytree(export, kopie)
+    for name, alt, neu in (("exemplare.csv", ";Magazin;", ";Keller;"), ("benutzer.csv", ";MA;", ";GA;")):
+        text = (kopie / name).read_text(encoding="utf-8")
+        (kopie / name).write_text(text.replace(alt, neu, 1), encoding="utf-8")
+    prot = umwandeln(kopie, tmp_path / "koha", WURZEL / "beispiel" / "freigaben.json", "http://opac", "http://dienst")
+    offen = [(k["art"], k["hinweis"]) for k in prot["offen"]]
+    assert ("Wert ohne Zuordnung", "standort „Keller“") in offen
+    assert ("Wert ohne Zuordnung", "gruppe „GA“") in offen

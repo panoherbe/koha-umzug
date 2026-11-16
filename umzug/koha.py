@@ -1,12 +1,13 @@
 """Access to a Koha installation: SQL through `koha-mysql`, shell through `koha-shell`, files by copy.
 
-Only Python's standard library is needed, so the check tools need no extra software. Measured in the test container;
-on a library's server the same commands are given as --sql/--shell (paths and rights are set in the analysis):
+Only Python's standard library is needed, so the check tools need no extra software.
 
-    in a test container (measured):  --container kohaumzug-koha-1 --instanz kohadev
-    on a Koha server:                --sql "sudo koha-mysql <instanz>"  --shell "sudo koha-shell <instanz> -c"
+    test container (measured):          --container kohaumzug-koha-1 --instanz kohadev
+    Koha server, check tools only:      --sql "sudo koha-mysql <instanz>"   (reads only; not measured there)
 
-SQL results come back as rows of strings (mysql --batch). Nothing here writes unless a caller sends a write statement.
+The loader (laden.py) and the fault drill (fehlerprobe.py) are set up for a test container only and refuse anything
+else. SQL results come back as rows of strings (mysql --batch). Nothing here writes unless a caller sends a write
+statement.
 """
 from __future__ import annotations
 
@@ -36,8 +37,8 @@ def _unescape(feld: str) -> str | None:
 class Koha:
     instanz: str = "kohadev"
     container: str | None = None          # docker container that runs Koha (test environment)
-    sql_befehl: str | None = None         # e.g. "sudo koha-mysql kohadev" on a server
-    shell_befehl: str | None = None       # e.g. "sudo koha-shell kohadev -c"
+    sql_befehl: str | None = None         # e.g. "sudo koha-mysql kohadev" on a server (check tools)
+    shell_befehl: str | None = None       # e.g. "sudo koha-shell kohadev -c"; the command line does not offer it
 
     def _sql_argv(self) -> list[str]:
         if self.sql_befehl:

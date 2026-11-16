@@ -1,7 +1,6 @@
 """What should be in Koha (from the Alephino export and the documented decisions) and what is in Koha.
 
-Both sides are read into plain dictionaries; the checks compare them. Standard library only, so the tools run on
-any Koha server with Python 3.
+Both sides are read into plain dictionaries; the checks compare them. Standard library only (Python 3.10 or newer).
 """
 from __future__ import annotations
 
@@ -134,14 +133,15 @@ class Ist:
                                       "'//datafield[@tag=\"035\"]/subfield[@code=\"a\"]') FROM auth_header"):
             i.normen[authid] = {"art": typ, "nummern": (ids or "").split()}
         bib_zu_nr = {v["biblionumber"]: nr for nr, v in i.titel.items()}
-        for itemnumber, bn, barcode, notiz, signatur, nfl in k.sql(
-                "SELECT itemnumber, biblionumber, barcode, itemnotes_nonpublic, itemcallnumber, notforloan FROM items"):
+        for itemnumber, bn, barcode, notiz, signatur, nfl, ort in k.sql(
+                "SELECT itemnumber, biblionumber, barcode, itemnotes_nonpublic, itemcallnumber, notforloan, location "
+                "FROM items"):
             eid = (notiz or "").split(")")[-1] if (notiz or "").startswith("(ALEPHINO-EX)") else None
             if eid is None:
                 i.exemplare_ohne_id.append(itemnumber)
                 continue
             i.exemplare[eid] = {"itemnumber": itemnumber, "titel": bib_zu_nr.get(bn), "barcode": barcode,
-                                "signatur": nfc(signatur), "praesenz": (nfl or "0") != "0"}
+                                "signatur": nfc(signatur), "praesenz": (nfl or "0") != "0", "standort": ort}
         for bnr, karte, sort1 in k.sql("SELECT borrowernumber, cardnumber, sort1 FROM borrowers"):
             i.benutzer[bnr] = {"cardnumber": karte, "alephino": (sort1 or "")[len("(ALEPHINO)"):]
                                if (sort1 or "").startswith("(ALEPHINO)") else None}

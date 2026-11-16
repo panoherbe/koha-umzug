@@ -5,9 +5,10 @@
 #   koha/testumgebung.sh <ordner>     # legt <ordner>/ktd und <ordner>/koha an und startet Koha
 #
 # Danach: OPAC http://127.0.0.1:18080, Dienstoberfläche http://127.0.0.1:18081 (Konto koha / koha).
-# Die Ports sind nur auf diesem Rechner erreichbar (127.0.0.1). Koha ist das Release 26.05.05 (Git-Tag v26.05.05-1),
-# koha-testing-docker der Stand vom 24.07.2026 (Commit ef7f1f9), damit jeder Lauf dieselbe Umgebung bekommt.
-# Dauer und Platz stehen mit Messdatum in der README („In zwei Minuten selbst prüfen“).
+# Die Ports sind nur auf diesem Rechner erreichbar (127.0.0.1). Festgelegt sind Koha (Release 26.05.05, Git-Tag
+# v26.05.05-1) und koha-testing-docker (Stand vom 24.07.2026, Commit ef7f1f9). Die Images koha/koha-testing:26.05 und
+# mariadb:10.11 sind Tags, die sich mit der Zeit ändern können; welches Image ein Messlauf hatte (mit Digest), steht in
+# nachweis/<Datum>/testumgebung.txt. Dauer und Platz stehen mit Messdatum in der README („In zwei Minuten selbst prüfen“).
 set -euo pipefail
 KOHA_TAG="v26.05.05-1"
 KTD_COMMIT="ef7f1f97a5ba24d7552d3c4ed6396f196e6b1b36"

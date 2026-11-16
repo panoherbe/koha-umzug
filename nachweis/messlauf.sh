@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 # Der vollständige Messlauf, dessen Zahlen in README und Protokoll stehen.
-#   nachweis/messlauf.sh <koha-container> [<python>]
-# Schreibt nachweis/<Datum>/: ergebnisse.json, pruefbericht/, fehlerprobe.json, fehlerprobe-bericht/, nach-neuladen/
-# und zuletzt PROTOKOLL.md (nachweis/protokoll.py, aus diesen Dateien). Ein zweiter Lauf am selben Tag ersetzt den Ordner.
+#   nachweis/messlauf.sh <koha-container> [<python>] [<ausgabe von koha/testumgebung.sh>]
+# Schreibt nachweis/<Datum>/: ergebnisse.json, laden.json (erstes Laden), pruefbericht/, fehlerprobe.json,
+# fehlerprobe-bericht/, laden-wieder.json (zweites Laden), nach-neuladen/, testumgebung.txt und zuletzt PROTOKOLL.md
+# (nachweis/protokoll.py, aus diesen Dateien). Ein zweiter Lauf am selben Tag ersetzt den Ordner.
 # Lädt Koha zweimal neu (--leeren): nur gegen eine Testumgebung laufen lassen.
 set -euo pipefail
-C="${1:?Koha-Container}"; PY="${2:-python3}"
+C="${1:?Koha-Container}"; PY="${2:-python3}"; START_LOG="${3:-}"
 cd "$(dirname "$0")/.."
 TAG="$(TZ=Europe/Berlin date +%F)"; N="nachweis/$TAG"; rm -rf "$N"; mkdir -p "$N"
 B=beispiel; ZUGANG="--container $C"
@@ -17,14 +18,35 @@ $PY -I daten/nachbilden.py --ziel $B/export > "$N/nachbilden.json"
 $PY -m umzug umwandeln $B/export $B/koha --freigaben $B/freigaben.json > "$N/umwandeln.json"
 t0=$(date +%s.%N); $PY -m umzug laden $B/koha $B/export $ZUGANG --leeren --sprache de-DE | tee "$N/laden.log"
 t_laden=$(echo "$(date +%s.%N) - $t0" | bc)
+cp $B/koha/laden.json "$N/laden.json"
 t0=$(date +%s.%N); $PY -m umzug pruefen alle $B/export $B/koha $ZUGANG --bericht "$N/pruefbericht" \
   --dienst-benutzer koha --dienst-passwort koha | tee "$N/pruefen.log"; t_pruefen=$(echo "$(date +%s.%N) - $t0" | bc)
 $PY -m umzug.fehlerprobe $B/export $B/koha $ZUGANG --ergebnis "$N/fehlerprobe.json" | tee "$N/fehlerprobe.log"
 $PY -m umzug pruefen alle $B/export $B/koha $ZUGANG --bericht "$N/fehlerprobe-bericht" > /dev/null || true
 $PY -m umzug laden $B/koha $B/export $ZUGANG --leeren --sprache de-DE > "$N/laden-wieder.log"
+cp $B/koha/laden.json "$N/laden-wieder.json"
 $PY -m umzug pruefen alle $B/export $B/koha $ZUGANG --bericht "$N/nach-neuladen" > /dev/null
 $PY -m pytest -q tests | tail -1 > "$N/tests.txt"
-cp $B/koha/protokoll.json $B/koha/laden.json $B/koha/klaerfaelle.csv "$N/"
+cp $B/koha/protokoll.json $B/koha/klaerfaelle.csv "$N/"
+# Die Testumgebung, wie sie gemessen wurde: Image mit Digest, Platz, Arbeitsspeicher (Koha geladen), Startdauer
+IMG_ID="$(docker inspect -f '{{.Image}}' "$C")"
+PROJEKT="$(docker inspect -f '{{index .Config.Labels "com.docker.compose.project"}}' "$C")"
+{
+  echo "Testumgebung beim Messlauf $TAG, geschrieben von nachweis/messlauf.sh"
+  echo "Koha-Container: $C, Image $(docker inspect -f '{{.Config.Image}}' "$C")"
+  echo "Image-ID: $IMG_ID"
+  echo "Image-Digest: $(docker image inspect -f '{{join .RepoDigests " "}}' "$IMG_ID")"
+  echo "Image-Größe: $(docker image inspect -f '{{.Size}}' "$IMG_ID") Bytes"
+  echo "Koha-Quellcode /kohadevbox/koha (du -sB1): $(docker exec "$C" du -sB1 /kohadevbox/koha | cut -f1) Bytes"
+  echo "Koha-Version (Koha.pm): $KOHA_VERSION"
+  echo "Arbeitsspeicher nach dem Messlauf, Koha geladen (docker stats):"
+  docker stats --no-stream --format '  {{.Name}}: {{.MemUsage}}' \
+    $(docker ps -q --filter "label=com.docker.compose.project=$PROJEKT")
+  if [ -n "$START_LOG" ]; then
+    echo "Start vor dem Messlauf (Ausgabe von koha/testumgebung.sh):"
+    grep -h "Koha läuft" "$START_LOG" | sed 's/^/  /'
+  fi
+} > "$N/testumgebung.txt"
 $PY - "$N" "$t_laden" "$t_pruefen" "$(git rev-parse HEAD)" "$KOHA_VERSION" "$SAUBER" <<'PY'
 import json, sys
 from pathlib import Path

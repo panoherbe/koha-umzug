@@ -1,11 +1,12 @@
 {
- "stand": "2026-11-16",
+ "stand": "2026-11-17",
  "hinweis": "Simuliert: So hält eine Bibliothek ihre Entscheidungen zu den Klärfällen fest. Ohne Regel hier stoppt die Umwandlung.",
  "regeln": {
   "Barcode doppelt": "zweites Exemplar erhält Suffix -2, Etikett wird neu gedruckt",
   "Exemplar ohne Titel": "weglassen, Liste geht an die Bibliothek",
   "Ausleihe ohne Benutzer": "weglassen, Liste geht an die Bibliothek",
   "Normdatenverknüpfung ins Leere": "Ansetzung als Text übernehmen, Verknüpfung nachpflegen",
-  "Feld ohne Zuordnung": "als Fußnote 500 übernehmen"
+  "Feld ohne Zuordnung": "als Fußnote 500 übernehmen",
+  "Zugangsdatum unbekannt": "ohne Zugangsdatum übernehmen"
  }
 }

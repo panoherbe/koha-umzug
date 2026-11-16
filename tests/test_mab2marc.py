@@ -95,3 +95,34 @@ def test_nichtsortierzeichen_in_namen_entfernt():
     r = umsetzer().titel(s).record
     assert r["100"]["a"] == "Loga, Sven von"
     assert r["245"]["a"] == "Der Baumeister" and r["245"].indicator2 == "4"
+
+
+def test_unterfelder_und_wiederholungen_ohne_regel():
+    """Nothing the rules do not read is dropped: unknown subfields, a repeated field read only once, a 902 without
+    a name; each is a Klärfall and its content a 500 note."""
+    s = Satz("000000010", [
+        Feld("001", daten="000000010"), Feld("331", unter=[("a", "Fachwerk"), ("x", "Bauakte")]),
+        Feld("331", unter=[("a", "Zweiter Titel")]), Feld("403", unter=[("a", "2. Aufl."), ("a", "Nachdruck")]),
+        Feld("902", unter=[("9", "000000003")]),
+    ])
+    erg = umsetzer().titel(s)
+    assert sorted((k.art, k.objekt) for k in erg.klaerfaelle) == [
+        ("Feld ohne Zuordnung", "Titel 000000010, Feld 331"),
+        ("Unterfeld ohne Zuordnung", "Titel 000000010, Feld 331 $x"),
+        ("Unterfeld ohne Zuordnung", "Titel 000000010, Feld 403 $a"),
+        ("Unterfeld ohne Zuordnung", "Titel 000000010, Feld 902 $9")]
+    noten = [f["a"] for f in erg.record.get_fields("500")]
+    assert "[MAB 331 $x] Bauakte" in noten and "[MAB 331] Zweiter Titel" in noten
+    assert "[MAB 403 $a] Nachdruck" in noten and "[MAB 902 $9] 000000003" in noten
+
+
+def test_normsatz_felder_ohne_regel():
+    s = Satz("000000004", [Feld("001", daten="000000004"), Feld("024", unter=[("a", "(DE-588)123")]),
+                           Feld("800", unter=[("p", "Jäger, Ida"), ("d", "1950-"), ("c", "Architektin")]),
+                           Feld("830", unter=[("p", "Jaeger, Ida")]), Feld("850", unter=[("a", "Bonn")])])
+    erg = umsetzer().norm("person", s)
+    assert sorted((k.art, k.objekt) for k in erg.klaerfaelle) == [
+        ("Normsatzfeld ohne Zuordnung", "person 000000004, Feld 850"),
+        ("Unterfeld ohne Zuordnung", "person 000000004, Feld 800 $c")]
+    assert sorted(f["a"] for f in erg.record.get_fields("667")) == ["[MAB 800 $c] Architektin", "[MAB 850] Bonn"]
+    assert erg.record["100"]["a"] == "Jäger, Ida" and erg.record["400"]["a"] == "Jaeger, Ida"

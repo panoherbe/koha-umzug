@@ -60,6 +60,10 @@ Satzzeichen nach ISBD schreibt der Konverter in den Datensatz (Leader/18 = „i�
 
 Ein Code ohne Eintrag bleibt nur als $4 stehen.
 
+### Was keine Regel hat
+
+Ein Feld ohne Regel, ein Unterfeld ohne Regel und ein zweites Vorkommen, wo die Regel nur das erste liest, gehen nicht verloren: Der Inhalt kommt als Fußnote 500 „[MAB 078] …“ (Normsätze: Anmerkung 667) in den Datensatz, und je Feld entsteht ein Klärfall („Feld ohne Zuordnung“, „Unterfeld ohne Zuordnung“, „Normsatzfeld ohne Zuordnung“). Ohne Regel in `freigaben.json` hält die Umwandlung an.
+
 ## Normdaten
 
 | Alephino-Stammsatz | MAB-Feld | MARC21-Normsatz | Bedeutung |
@@ -80,9 +84,11 @@ Ein Code ohne Eintrag bleibt nur als $4 stehen.
 | benutzer_id | borrowers.sort1 | Alephino-Nummer bleibt erhalten |
 | ausweis | cardnumber | Ausweisnummer, Schlüssel für die Ausleihe |
 | nachname, vorname, email | surname, firstname, email | |
-| gruppe | categorycode | Benutzergruppe nach Freigabe |
+| gruppe | categorycode | Benutzergruppe (Tabelle in `umzug/werte.py`) |
 | gueltig_bis | dateexpiry | |
 | ausleihen.csv | issues (issuedate, date_due, renewals_count), items.onloan | laufende Ausleihen |
 | ausleihhistorie.csv | old_issues (issuedate, returndate) | Historie, in der Dienstoberfläche sichtbar |
 
-Passwörter werden nicht übertragen: Benutzerinnen und Benutzer setzen ihr Passwort über „Passwort vergessen“ im OPAC neu (Verfahren wird abgestimmt).
+Exemplarwerte (Standort, Medientyp, Status) und Benutzergruppen übersetzen die Tabellen in `umzug/werte.py`; ein Wert, der dort fehlt, wird ein Klärfall „Wert ohne Zuordnung“.
+
+Passwörter werden nicht übertragen: Benutzerinnen und Benutzer setzen ihr Passwort über „Passwort vergessen“ im OPAC neu.

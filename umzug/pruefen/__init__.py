@@ -2,7 +2,8 @@
 deviation; none of them writes to Koha.
 
     mengen       amount reconciliation per data set, with the identifiers that are missing or extra
-    beziehungen  title–item assignment, authority links, superior records, titles with special characters
+    beziehungen  title–item assignment (barcode, call number, location, loan status), authority links, superior
+                 records, titles with special characters
     pdf          title–PDF links: reachable, unchanged (SHA-256), and staff-only files not reachable from outside
     ausleihen    current loans (patron, item, dates, renewals) and loan history
 
@@ -24,6 +25,7 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 
 from ..koha import Koha
+from ..werte import STANDORTE
 from .stand import ART_PRAEFIX, MENGENMINDERND, Ist, Soll, ausleihe_soll
 
 KOHA_TYP = {"person": "PERSO_NAME", "koerperschaft": "CORPO_NAME", "schlagwort": ("TOPIC_TERM", "GEOGR_NAME")}
@@ -63,9 +65,9 @@ def mengen(soll: Soll, ist: Ist) -> tuple[dict, list[Abweichung]]:
     zeilen = []
     for name, (s, i) in paare.items():
         fehlt, extra = sorted(s - i), sorted(i - s)
-        for x in fehlt[:200]:
+        for x in fehlt:
             _abw(abw, "mengen", name, x, "in Koha", "fehlt")
-        for x in extra[:200]:
+        for x in extra:
             _abw(abw, "mengen", name, x, "nicht in Koha", "zusätzlich")
         zeilen.append({"bestand": name, "quelle": soll.quelle_mengen.get(name, len(s)), "erwartet": len(s),
                        "koha": len(i), "fehlt": len(fehlt), "zusaetzlich": len(extra), "ok": not fehlt and not extra})
@@ -104,6 +106,9 @@ def beziehungen(soll: Soll, ist: Ist) -> tuple[dict, list[Abweichung]]:
             _abw(abw, "beziehungen", "Barcode", f"Exemplar {eid}", e["barcode"], k["barcode"])
         if k["signatur"] != e["signatur"]:
             _abw(abw, "beziehungen", "Signatur", f"Exemplar {eid}", e["signatur"], k["signatur"])
+        if (k.get("standort") or None) != STANDORTE.get(e.get("standort", "")):
+            _abw(abw, "beziehungen", "Standort", f"Exemplar {eid}",
+                 f"{e.get('standort')} ({STANDORTE.get(e.get('standort', ''), 'ohne')})", k.get("standort") or "ohne")
         if k["praesenz"] != (e["status"] == "praesenz"):
             _abw(abw, "beziehungen", "Ausleihstatus", f"Exemplar {eid}", e["status"],
                  "Präsenz" if k["praesenz"] else "ausleihbar")
@@ -264,7 +269,7 @@ BESTAND = {"titel": "Titel", "exemplare": "Exemplare", "personen": "Personen (No
            "koerperschaften": "Körperschaften (Normdaten)", "schlagwoerter": "Schlagwörter (Normdaten)",
            "benutzer": "Benutzer", "ausleihen": "laufende Ausleihen", "ausleihhistorie": "Ausleihhistorie",
            "pdf": "PDF-Dateien"}
-GEPRUEFT = {"exemplare": "Exemplare am richtigen Titel", "normdatenverknuepfungen": "Normdatenverknüpfungen",
+GEPRUEFT = {"exemplare": "Exemplare am richtigen Titel (Barcode, Signatur, Standort, Ausleihstatus)", "normdatenverknuepfungen": "Normdatenverknüpfungen",
             "hierarchie": "Bände mit ihrer Reihe", "titel_text": "Titel Zeichen für Zeichen",
             "pdf": "PDF-Verknüpfungen", "oeffentlich": "davon öffentlich abrufbar und unverändert",
             "intern": "davon nur intern", "intern_mit_anmeldung_geprueft": "intern mit Anmeldung geprüft",

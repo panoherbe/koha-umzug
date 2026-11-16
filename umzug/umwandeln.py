@@ -13,8 +13,25 @@ Writes into <ziel>:
     klaerfaelle.csv   every data quality finding with the action taken
     protokoll.json    counts in, counts out, what was left out and why, NFC corrections
 
-Nothing is left out, merged or changed in content without a rule in the release file (freigaben.json, decided by the
-library). A finding without such a rule stops the conversion (exit 2) and lists what needs a decision.
+Every data finding becomes a line in klaerfaelle.csv (a Klärfall). A finding counts as decided only if the release
+file (--freigaben, e.g. beispiel/freigaben.json) has a rule for its kind; then the rule's text is written next to it.
+Findings without a rule stop the conversion with exit code 2: the files are still written, so they can be read, and
+`laden` refuses them. What each kind does to the data:
+
+    Barcode doppelt                  the second item gets the suffix -2 (with a rule naming „Suffix“), else left out
+    Exemplar ohne Titel              item left out (counted in protokoll.json „weggelassen“)
+    Ausleihe ohne Benutzer           loan left out (counted)
+    Ausleihe ohne Exemplar           loan left out
+    Zugangsdatum unbekannt           item kept, without 952 $d
+    Wert ohne Zuordnung              item or patron kept; the value outside the tables in werte.py is not set
+                                     (no location, item type BK, loanable, patron category EX)
+    Feld / Unterfeld ohne Zuordnung  content kept as a note (titles 500, authorities 667), see mab2marc.py
+    Normsatzfeld ohne Zuordnung      content kept as a note 667 in the authority record
+    Normdatenverknüpfung ins Leere   name kept as text, without link
+    Übergeordneter Titel fehlt       record kept, without 773
+    Hauptsachtitel fehlt             record kept with „[ohne Titel]“
+    PDF-Datei fehlt                  title kept, without 856
+    Normsatz ohne Ansetzung          authority record left out
 """
 from __future__ import annotations
 
@@ -29,11 +46,8 @@ from pymarc import Field, MARCWriter, Subfield
 from .alephino import Export, datum
 from .mab2marc import Klaerfall, Umsetzer, exemplar_952, nichtsortier
 from .mab2marc import nfc as nfc_text
+from .werte import GRUPPEN, STANDORTE, STATUS, TYPEN, ZWEIG
 
-ZWEIG = "BIB"
-TYPEN = {"BK": "BK", "ZS": "ZS", "KT": "KT"}
-STANDORTE = {"Magazin": "MAG", "Lesesaal": "LS", "Freihand": "FH"}
-GRUPPEN = {"MA": "MA", "EX": "EX"}
 DATEN = ("normdaten.mrc", "titel.mrc", "benutzer.csv", "ausleihen.json", "historie.json", "pdf.json",
          "klaerfaelle.csv", "protokoll.json")
 
@@ -121,8 +135,13 @@ def umwandeln(export: Path, ziel: Path, freigaben: Path | None, opac_url: str, d
             else:
                 continue
         if datum(e.get("zugang")) is None:
-            klaer.append(Klaerfall("Zugangsdatum unbekannt", f"Exemplar {e['exemplar_id']}",
-                                   f"Wert „{e.get('zugang')}“", "übernommen ohne Zugangsdatum"))
+            klaer.append(fg.pruefen(Klaerfall("Zugangsdatum unbekannt", f"Exemplar {e['exemplar_id']}",
+                                              f"Wert „{e.get('zugang')}“", "übernommen ohne Zugangsdatum")))
+        for spalte, tabelle, ersatz in (("standort", STANDORTE, "ohne Standort"), ("medientyp", TYPEN, "als BK"),
+                                        ("status", STATUS, "als ausleihbar")):
+            if e.get(spalte) not in tabelle:
+                klaer.append(fg.pruefen(Klaerfall("Wert ohne Zuordnung", f"Exemplar {e['exemplar_id']}",
+                                                  f"{spalte} „{e.get(spalte)}“", f"übernommen {ersatz}")))
         gesehen[e["barcode"]] = e["exemplar_id"]
         barcodes[e["exemplar_id"]] = e["barcode"]
         nach_titel.setdefault(e["titel_id"], []).append(e)
@@ -176,6 +195,9 @@ def umwandeln(export: Path, ziel: Path, freigaben: Path | None, opac_url: str, d
         wr.writeheader()
         for b in ex.benutzer:
             karten[b["benutzer_id"]] = b["ausweis"]
+            if b.get("gruppe") not in GRUPPEN:
+                klaer.append(fg.pruefen(Klaerfall("Wert ohne Zuordnung", f"Benutzer {b['benutzer_id']}",
+                                                  f"gruppe „{b.get('gruppe')}“", "übernommen als EX")))
             wr.writerow({"cardnumber": b["ausweis"], "surname": b["nachname"], "firstname": b["vorname"],
                          "email": b["email"], "branchcode": ZWEIG, "categorycode": GRUPPEN.get(b["gruppe"], "EX"),
                          "dateexpiry": datum(b["gueltig_bis"]) or "", "sort1": f"(ALEPHINO){b['benutzer_id']}"})

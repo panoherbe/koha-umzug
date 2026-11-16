@@ -41,8 +41,8 @@ ABFRAGEN = [
     "sw=Design and jhr>2014",
 ]
 PRO_ABFRAGE = 220
-# The sample must not copy the holdings of a real public body: leave out official publications of state, regional
-# and federal agencies and every title about a single German federal state.
+# Official publications and titles about a single German federal state stay out, so the sample remains a general
+# art and design collection.
 LAENDER = ("Baden-Württemberg|Bayern|Berlin|Brandenburg|Bremen|Hamburg|Hessen|Mecklenburg-Vorpommern|Niedersachsen|"
            "Nordrhein-Westfalen|Rheinland-Pfalz|Saarland|Sachsen|Sachsen-Anhalt|Schleswig-Holstein|Thüringen")
 AUSLASSEN = re.compile(rf"Landesamt|Landesanstalt|Landschaftsverband|Bundesamt|Bundesanstalt|{LAENDER}", re.I)

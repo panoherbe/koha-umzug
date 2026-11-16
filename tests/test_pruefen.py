@@ -40,7 +40,8 @@ def ist_wie_geladen(ziel):
                 item += 1
                 eid = f["x"].split(")")[-1]
                 ist.exemplare[eid] = {"itemnumber": str(item), "titel": nr, "barcode": f["p"],
-                                      "signatur": nfc(f.get("o")), "praesenz": f.get("7") == "1"}
+                                      "signatur": nfc(f.get("o")), "praesenz": f.get("7") == "1",
+                                      "standort": f.get("c")}
     per_barcode = {v["barcode"]: e for e, v in ist.exemplare.items()}
     for a in json.loads((ziel / "ausleihen.json").read_text()):
         ist.ausleihen.append({"exemplar_id": per_barcode[a["barcode"]], "karte": a["cardnumber"],
@@ -88,6 +89,26 @@ def test_beziehungen_findet_falsche_zuordnung_und_verknuepfung(stand):
     bereiche = {(a.bereich, a.objekt) for a in abw}
     assert ("Titel–Exemplar", f"Exemplar {eid}") in bereiche
     assert any(b == "Normdaten" and o == f"Titel {titel}" for b, o in bereiche)
+
+
+def test_beziehungen_findet_falschen_standort(stand):
+    soll, ist = stand
+    ist = copy.deepcopy(ist)
+    eid = next(e for e, v in sorted(soll.exemplare.items()) if v["standort"] == "Magazin")
+    ist.exemplare[eid]["standort"] = "LS"
+    _erg, abw = beziehungen(soll, ist)
+    assert [(a.bereich, a.objekt, a.gefunden) for a in abw] == [("Standort", f"Exemplar {eid}", "LS")]
+
+
+def test_mengen_listet_jede_fehlende_nummer(stand):
+    """No cap: 300 missing items give 300 lines."""
+    soll, ist = stand
+    ist = copy.deepcopy(ist)
+    weg = sorted(ist.exemplare)[:300]
+    for eid in weg:
+        del ist.exemplare[eid]
+    _erg, abw = mengen(soll, ist)
+    assert sorted(a.objekt for a in abw if a.bereich == "exemplare") == weg
 
 
 def test_beziehungen_findet_zerstoerten_umlaut(stand):

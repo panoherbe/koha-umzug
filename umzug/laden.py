@@ -1,17 +1,20 @@
 """Load the converted files into Koha with Koha's own tools, then write the identifier mapping tables.
 
-    python -m umzug laden <koha-dateien> --container kohaumzug-koha-1 [--leeren] [--opac-url …] [--dienst-url …]
+    python -m umzug laden <koha-dateien> <export> --container kohaumzug-koha-1 [--leeren] [--sprache de-DE]
 
-Measured only in the test environment (koha-testing-docker). On a library's Koha server the paths of Koha's tools
-and the rights for the work folder, the upload folder and the index rebuild differ; they are set in the analysis of a
-real project, not guessed here.
+Set up for the test environment only (koha-testing-docker): it needs --container and refuses --sql/--shell. Koha's
+tools are called from the source folder of that container (KOHA_DIR); on a Koha server installed from packages
+they live elsewhere and the work folder, upload folder and index rebuild need other rights. The check tools
+(umzug.pruefen) can read a server with --sql; the loader cannot yet.
 
 Refuses to load when the conversion stopped (open Klärfälle in protokoll.json): nothing is loaded that the library
-has not decided on. --leeren (remove all records first) runs only against a test container (--container).
+has not decided on. --leeren removes, before loading: all titles, items, authority records, patrons (except the
+staff account „koha“ of the test environment), current loans and loan history, holds, fines, statistics, queued
+notices and the entries of uploaded files. Every command that fails stops the loader (non-zero exit status).
 
 Order (each step is logged with its counts):
 
-1. test environment only (--leeren): remove Koha's sample catalogue, patrons, loans and uploads
+1. --leeren: remove the test environment's sample data (list above)
 2. basic settings for the migration: branch, item types, locations, patron categories, upload category, system
    preferences (Koha links 773 $w via 001; no automatic re-linking of authorities)
 3. authorities with bulkmarcimport.pl, then read back Koha's authority numbers (authid) by the Alephino number in 035
@@ -31,13 +34,16 @@ import tempfile
 import time
 from pathlib import Path
 
-from pymarc import MARCReader, MARCWriter, Subfield
+from pymarc import MARCReader, MARCWriter
 
 from .koha import Koha, sql_text
-from .umwandeln import GRUPPEN, STANDORTE, TYPEN, ZWEIG
+from .werte import GRUPPEN, GRUPPENNAMEN, STANDORTE, TYPEN, TYPNAMEN, ZWEIG
 
 KOHA_DIR = "/kohadevbox/koha"           # Koha source in the test container (koha-testing-docker), measured there
 UPLOAD_KATEGORIE = "PDF"
+GELOESCHT = ("alle Titel, Exemplare, Normsätze, Benutzer (außer dem Konto „koha“), laufenden Ausleihen und die "
+             "Ausleihhistorie, Vormerkungen, Gebühren, Statistik, wartende Benachrichtigungen und die Einträge "
+             "hochgeladener Dateien")
 NORM_PRAEFIX = ("(ALEPHINO-PER)", "(ALEPHINO-KOE)", "(ALEPHINO-SW)")
 
 
@@ -60,19 +66,17 @@ SET FOREIGN_KEY_CHECKS=1;""")
 
 def grundeinstellungen(k: Koha, opac_url: str, dienst_url: str, sprache: str | None) -> None:
     zeilen = [f"INSERT IGNORE INTO branches (branchcode, branchname) VALUES ('{ZWEIG}', 'Bibliothek');"]
-    namen = {"BK": "Buch", "ZS": "Zeitschriftenband", "KT": "Karte"}
     for code in sorted(set(TYPEN.values())):
-        zeilen.append(f"INSERT INTO itemtypes (itemtype, description) VALUES ('{code}', '{namen[code]}') "
-                      f"ON DUPLICATE KEY UPDATE description = '{namen[code]}';")
+        zeilen.append(f"INSERT INTO itemtypes (itemtype, description) VALUES ('{code}', '{TYPNAMEN[code]}') "
+                      f"ON DUPLICATE KEY UPDATE description = '{TYPNAMEN[code]}';")
     for name, code in STANDORTE.items():
         zeilen.append(f"INSERT IGNORE INTO authorised_values (category, authorised_value, lib, lib_opac) "
                       f"VALUES ('LOC', '{code}', '{name}', '{name}');")
     zeilen.append(f"INSERT IGNORE INTO authorised_values (category, authorised_value, lib, lib_opac) "
                   f"VALUES ('UPLOAD', '{UPLOAD_KATEGORIE}', 'Volltexte (PDF)', 'Volltexte (PDF)');")
-    gruppen = {"MA": "Mitarbeitende", "EX": "Externe"}
     for code in sorted(set(GRUPPEN.values())):
         zeilen.append(f"INSERT IGNORE INTO categories (categorycode, description, enrolmentperiod, category_type, "
-                      f"default_privacy) VALUES ('{code}', '{gruppen[code]}', 24, 'A', 'default');")
+                      f"default_privacy) VALUES ('{code}', '{GRUPPENNAMEN[code]}', 24, 'A', 'default');")
     prefs = {"UseControlNumber": "1", "AutoLinkBiblios": "0", "CatalogModuleRelink": "0",
              "BiblioAddsAuthorities": "0", "AutoCreateAuthorities": "0", "OPACBaseURL": opac_url,
              "staffClientBaseURL": dienst_url, "dateformat": "dmydot", "CalendarFirstDayOfWeek": "1"}
@@ -81,7 +85,7 @@ def grundeinstellungen(k: Koha, opac_url: str, dienst_url: str, sprache: str | N
                   "opaclanguagesdisplay": "0"}
     for var, val in prefs.items():
         zeilen.append(f"UPDATE systempreferences SET value = {sql_text(val)} WHERE variable = '{var}';")
-    # loan rules for everybody: 28 days, three renewals of 28 days (agreed with the library in a real project)
+    # loan rules of the sample for everybody: 28 days, three renewals of 28 days (a library sets its own)
     for regel, wert in {"issuelength": "28", "renewalperiod": "28", "renewalsallowed": "3", "maxissueqty": "50"}.items():
         zeilen.append(f"UPDATE circulation_rules SET rule_value = '{wert}' WHERE branchcode IS NULL AND "
                       f"categorycode IS NULL AND itemtype IS NULL AND rule_name = '{regel}';")
@@ -102,11 +106,16 @@ def hinein(k: Koha, datei: Path) -> str:
     return ziel
 
 
+def letzte(text: str, n: int) -> str:
+    """The last n lines of a tool's output (no pipe to tail: its exit status would hide the tool's)."""
+    return "\n".join(text.strip().splitlines()[-n:])
+
+
 def bulkmarcimport(k: Koha, datei: Path, art: str) -> str:
     ziel = hinein(k, datei)
     flag = "-a" if art == "auth" else "-b"
-    return k.shell(f"cd {KOHA_DIR} && perl misc/migration_tools/bulkmarcimport.pl {flag} -c MARC21 "
-                   f"-file {ziel} -v 0 2>&1 | tail -5")
+    return letzte(k.shell(f"cd {KOHA_DIR} && perl misc/migration_tools/bulkmarcimport.pl {flag} -c MARC21 "
+                          f"-file {ziel} -v 0 2>&1"), 5)
 
 
 def authid_karte(k: Koha) -> dict[str, str]:
@@ -209,7 +218,7 @@ def zuordnungen(k: Koha, ziel: Path) -> dict[str, int]:
 
 
 def vorpruefen(dateien: Path, k: Koha, leeren_erst: bool) -> None:
-    """Stop before anything touches Koha: open Klärfälle, or --leeren outside a test container."""
+    """Stop before anything touches Koha: open Klärfälle, --leeren or loading outside a test container."""
     prot = dateien / "protokoll.json"
     if not prot.exists():
         raise SystemExit(f"STOPP: {prot} fehlt, erst umwandeln")
@@ -218,9 +227,12 @@ def vorpruefen(dateien: Path, k: Koha, leeren_erst: bool) -> None:
         arten = sorted({o["art"] for o in offen})
         raise SystemExit(f"STOPP: {len(offen)} Klärfälle ohne Freigabe ({', '.join(arten)}); erst entscheiden "
                          f"(freigaben.json), dann neu umwandeln. Siehe {dateien / 'klaerfaelle.csv'}")
-    if leeren_erst and not k.container:
-        raise SystemExit("STOPP: --leeren löscht alle Titel, Exemplare, Benutzer und Ausleihen und ist nur mit "
-                         "--container (Testumgebung) erlaubt")
+    if leeren_erst and (not k.container or k.sql_befehl or k.shell_befehl):
+        raise SystemExit(f"STOPP: --leeren löscht {GELOESCHT} und ist nur mit --container (Testumgebung) erlaubt, "
+                         "nicht zusammen mit --sql oder --shell")
+    if not k.container or k.sql_befehl or k.shell_befehl:
+        raise SystemExit("STOPP: Laden ist heute nur für die Testumgebung eingerichtet (--container NAME, ohne --sql "
+                         "und --shell); auf einem Koha-Server laufen bisher nur die Prüfwerkzeuge")
 
 
 def laden(dateien: Path, export: Path, k: Koha, opac_url: str, dienst_url: str, leeren_erst: bool,
@@ -249,21 +261,25 @@ def laden(dateien: Path, export: Path, k: Koha, opac_url: str, dienst_url: str, 
     log("Titel und Exemplare geladen", titel=ergebnis["titel"], exemplare=ergebnis["exemplare"])
 
     ziel = hinein(k, dateien / "benutzer.csv")
-    k.shell(f"cd {KOHA_DIR} && perl misc/import_patrons.pl --file {ziel} --matchpoint cardnumber "
-            "--confirm 2>&1 | tail -3")
+    k.shell(f"cd {KOHA_DIR} && perl misc/import_patrons.pl --file {ziel} --matchpoint cardnumber --confirm 2>&1")
     ergebnis["benutzer"] = int(k.wert("SELECT COUNT(*) FROM borrowers WHERE sort1 LIKE '(ALEPHINO)%'") or 0)
     log("Benutzer geladen", anzahl=ergebnis["benutzer"])
 
     ergebnis["ausleihen"], ergebnis["ausleihhistorie"] = ausleihen_laden(k, dateien)
     log("Ausleihen geladen", laufend=ergebnis["ausleihen"], historie=ergebnis["ausleihhistorie"])
 
-    upload_pfad = k.shell("grep -oP '(?<=<upload_path>)[^<]+' /etc/koha/sites/$(ls /etc/koha/sites | head -1)"
-                          "/koha-conf.xml", als_root=True).strip()
+    upload_pfad = k.shell(f"grep -oP '(?<=<upload_path>)[^<]+' /etc/koha/sites/{k.instanz}/koha-conf.xml",
+                          als_root=True).strip()
+    if not upload_pfad:
+        raise RuntimeError(f"kein <upload_path> in /etc/koha/sites/{k.instanz}/koha-conf.xml")
     ergebnis["pdf"] = pdf_laden(k, export, dateien, upload_pfad)
     log("PDF-Dateien geladen", anzahl=ergebnis["pdf"])
 
-    k.shell(f"koha-rebuild-zebra -f {k.instanz} >/dev/null 2>&1; koha-plack --restart {k.instanz} >/dev/null 2>&1; "
-            "echo flush_all | nc -q1 memcached 11211 >/dev/null 2>&1 || true", als_root=True)
+    # each step on its own, so a failing index rebuild or Plack restart stops the loader (k.shell checks the status);
+    # clearing memcached is optional (the caches expire anyway)
+    k.shell(f"koha-rebuild-zebra -f {k.instanz}", als_root=True)
+    k.shell(f"koha-plack --restart {k.instanz}", als_root=True)
+    k.shell("echo flush_all | nc -q1 memcached 11211 >/dev/null 2>&1 || true", als_root=True)
     log("Suchindex neu aufgebaut")
     ergebnis["zuordnungstabellen"] = zuordnungen(k, dateien)
     ergebnis["dauer_s"] = round(time.time() - start, 1)

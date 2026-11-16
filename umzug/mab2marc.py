@@ -18,16 +18,19 @@ What the conversion does beyond copying fields:
   without punctuation, Koha shows MARC subfields as they are. The converter writes the punctuation into the record
   („Titel : Zusatz / Verantwortlich“, „Ort : Verlag, Jahr“, „Reihe ; Band“), so leader/18 = „i“ is true
 - roles: the relator code ($4, e.g. „edt“) gets the German relator term in $e („Herausgeber“), which Koha shows
-- everything that cannot be mapped is listed, never dropped silently (Klaerfall)
+- everything the rules do not read is listed, never dropped silently: an unknown field, a subfield without a rule,
+  a second occurrence where the rules read only the first. Each becomes a Klaerfall and its content a note (titles
+  500 „[MAB 078] …“, authorities 667), so nothing of the export is lost before the library has decided
 """
 from __future__ import annotations
 
 import unicodedata
+from collections import Counter
 from dataclasses import dataclass, field
 
 from pymarc import Field, Leader, Record, Subfield
 
-from .alephino import Satz, datum
+from .alephino import Feld, Satz, datum
 
 QUELLE = "ALEPHINO"
 PRAEFIX_NORM = {"person": "ALEPHINO-PER", "koerperschaft": "ALEPHINO-KOE", "schlagwort": "ALEPHINO-SW"}
@@ -146,6 +149,32 @@ KOERPERSCHAFTEN = [f"{n:03d}" for n in range(200, 300, 4)]
 SW_TAG = {"s": ("650", "s"), "g": ("651", "g"), "p": ("600", "p"), "k": ("610", "k")}
 NORMART_VON_CODE = {"s": "schlagwort", "g": "schlagwort", "p": "person", "k": "koerperschaft"}
 
+# What the title rules read, per MAB field: the subfield codes and whether every occurrence of the field is read
+# (False: only the first, s.wert). Of each code only the first occurrence in a field is read (Feld.get).
+KONTROLLFELDER = {"001", "FMT", "LDR"}
+LESEN_TITEL: dict[str, tuple[str, bool]] = {
+    **{mab: (code, True) for mab, code, *_ in EINFACH},
+    **{t: ("p94", True) for t in PERSONEN}, **{t: ("k94", True) for t in KOERPERSCHAFTEN},
+    "002": ("a", False), "010": ("a", False), "025": ("a", False), "037": ("b", False), "089": ("a", False),
+    "331": ("a", False), "335": ("a", False), "359": ("a", False), "902": ("sgpk9", True),
+}
+
+
+def ungenutzt(f: Feld, codes: str, einer_von: str = "") -> list[tuple[str, str]]:
+    """The non-empty subfields of f that the rules do not read: codes outside `codes` and repeated codes.
+    `einer_von`: of these codes only the first one present is read (902: the name in s, g, p or k); without one of
+    them the rules skip the field, so nothing of it is read."""
+    erster = next((c for c in einer_von if f.get(c)), None)
+    if einer_von and erster is None:
+        return [(c, v) for c, v in f.unter if v.strip()]
+    gelesen, rest = set(), []
+    for c, v in f.unter:
+        if c in codes and c not in gelesen and (c not in einer_von or c == erster):
+            gelesen.add(c)
+        elif v.strip():
+            rest.append((c, v))
+    return rest
+
 
 class Umsetzer:
     """Converts title and authority records. Knows the authority numbers that exist, to find broken links."""
@@ -163,6 +192,36 @@ class Umsetzer:
         if geaendert:
             erg.nfc_korrigiert += 1
         return n if roh else n.replace(NICHTSORT, "").replace("\x98", "").replace("\x9c", "")
+
+    def _rest(self, s: Satz, lesen: dict[str, tuple[str, bool]], erg: Ergebnis, objekt: str, notiz: str,
+              feld_art: str) -> None:
+        """Everything of s the rules do not read: one Klärfall per field, the content kept as note `notiz`."""
+        wo = "Fußnote" if notiz == "500" else "Anmerkung"
+
+        def notieren(kennung: str, inhalt: str) -> None:
+            erg.record.add_field(Field(tag=notiz, indicators=[" ", " "],
+                                       subfields=[Subfield("a", f"[MAB {kennung}] {self._t(inhalt, erg)}")]))
+
+        anzahl: Counter[str] = Counter()
+        for f in s.felder:
+            if f.tag in KONTROLLFELDER:
+                continue
+            anzahl[f.tag] += 1
+            regel = lesen.get(f.tag)
+            if regel is None or (not regel[1] and anzahl[f.tag] > 1):
+                erg.klaerfaelle.append(Klaerfall(
+                    feld_art, f"{objekt}, Feld {f.tag}",
+                    ("Feld wiederholt, umgesetzt ist das erste; " if regel else "")
+                    + f"Inhalt in {notiz} $a übernommen, Zuordnung festlegen", f"übernommen als {wo}"))
+                notieren(f.tag, f.daten or " ".join(v for _c, v in f.unter))
+                continue
+            rest = ungenutzt(f, regel[0], "sgpk" if f.tag == "902" else "")
+            if rest:
+                erg.klaerfaelle.append(Klaerfall(
+                    "Unterfeld ohne Zuordnung", f"{objekt}, Feld {f.tag} " + " ".join(f"${c}" for c, _v in rest),
+                    f"Inhalt in {notiz} $a übernommen, Zuordnung festlegen", f"übernommen als {wo}"))
+                for c, v in rest:
+                    notieren(f"{f.tag} ${c}", v)
 
     def _link(self, art: str, nummer: str | None, tag: str, erg: Ergebnis, sysno: str, name: str) -> list[Subfield]:
         if not nummer:
@@ -270,16 +329,7 @@ class Umsetzer:
             ind = ["1", "7"] if tag == "600" else ["2", "7"] if tag == "610" else [" ", "7"]
             rec.add_field(Field(tag=tag, indicators=ind, subfields=sub))
 
-        bekannt = {"001", "002", "010", "025", "037", "089", "331", "902", "FMT", "LDR"} | {m for m, *_ in EINFACH} \
-            | set(PERSONEN) | set(KOERPERSCHAFTEN)
-        for f in s.felder:
-            if f.tag not in bekannt:
-                erg.klaerfaelle.append(Klaerfall("Feld ohne Zuordnung", f"Titel {sysno}, Feld {f.tag}",
-                                                 "Inhalt in 500 $a übernommen, Zuordnung festlegen",
-                                                 "übernommen als Fußnote"))
-                inhalt = f.daten or " ".join(v for _c, v in f.unter)
-                rec.add_field(Field(tag="500", indicators=[" ", " "],
-                                    subfields=[Subfield("a", f"[MAB {f.tag}] {self._t(inhalt, erg)}")]))
+        self._rest(s, LESEN_TITEL, erg, f"Titel {sysno}", "500", "Feld ohne Zuordnung")
         return erg
 
     def norm(self, art: str, s: Satz) -> Ergebnis:
@@ -296,22 +346,27 @@ class Umsetzer:
                                              "nicht übernommen, zur Freigabe"))
             return erg
         if art == "person":
+            lesen800 = "pd"
             sub = [Subfield("a", self._t(ans.get("p") or "", erg))]
             if (d := ans.get("d")):
                 sub.append(Subfield("d", self._t(d, erg)))
             rec.add_field(Field(tag="100", indicators=["1", " "], subfields=sub))
             vtag, vcode, vind = "400", "p", ["1", " "]
         elif art == "koerperschaft":
+            lesen800 = "k"
             rec.add_field(Field(tag="110", indicators=["2", " "], subfields=[Subfield("a", self._t(ans.get("k") or "", erg))]))
             vtag, vcode, vind = "410", "k", ["2", " "]
         else:
             geo = ans.get("g") is not None
+            lesen800 = "g" if geo else "s"
             rec.add_field(Field(tag="151" if geo else "150", indicators=[" ", " "],
                                 subfields=[Subfield("a", self._t(ans.get("g") or ans.get("s") or "", erg))]))
             vtag, vcode, vind = ("451", "g", [" ", " "]) if geo else ("450", "s", [" ", " "])
         for f in s.felder_von("830"):
             if (v := f.get(vcode)):
                 rec.add_field(Field(tag=vtag, indicators=vind, subfields=[Subfield("a", self._t(v, erg))]))
+        lesen = {"024": ("a", False), "800": (lesen800, False), "830": (vcode, True)}
+        self._rest(s, lesen, erg, f"{art} {s.sysno}", "667", "Normsatzfeld ohne Zuordnung")
         return erg
 
 
@@ -347,7 +402,12 @@ def feldzuordnung_md() -> str:
                "„Titel. Band“), 264 „Ort : Verlag, Jahr“, 490 „Reihe ; Band“.", "",
                "### Rollen ($4 → $e)", "", "| $4 | $e |", "|---|---|"]
     zeilen += [f"| {code} | {wort} |" for code, wort in ROLLEN.items()]
-    zeilen += ["", "Ein Code ohne Eintrag bleibt nur als $4 stehen."]
+    zeilen += ["", "Ein Code ohne Eintrag bleibt nur als $4 stehen.", "",
+               "### Was keine Regel hat", "",
+               "Ein Feld ohne Regel, ein Unterfeld ohne Regel und ein zweites Vorkommen, wo die Regel nur das erste "
+               "liest, gehen nicht verloren: Der Inhalt kommt als Fußnote 500 „[MAB 078] …“ (Normsätze: Anmerkung "
+               "667) in den Datensatz, und je Feld entsteht ein Klärfall („Feld ohne Zuordnung“, „Unterfeld ohne "
+               "Zuordnung“, „Normsatzfeld ohne Zuordnung“). Ohne Regel in `freigaben.json` hält die Umwandlung an."]
     zeilen += ["", "## Normdaten", "", "| Alephino-Stammsatz | MAB-Feld | MARC21-Normsatz | Bedeutung |",
                "|---|---|---|---|",
                "| Person | 800 $p, $d | 100 1_ $a, $d | Ansetzung |",
@@ -363,10 +423,12 @@ def feldzuordnung_md() -> str:
                "| benutzer_id | borrowers.sort1 | Alephino-Nummer bleibt erhalten |",
                "| ausweis | cardnumber | Ausweisnummer, Schlüssel für die Ausleihe |",
                "| nachname, vorname, email | surname, firstname, email | |",
-               "| gruppe | categorycode | Benutzergruppe nach Freigabe |",
+               "| gruppe | categorycode | Benutzergruppe (Tabelle in `umzug/werte.py`) |",
                "| gueltig_bis | dateexpiry | |",
                "| ausleihen.csv | issues (issuedate, date_due, renewals_count), items.onloan | laufende Ausleihen |",
                "| ausleihhistorie.csv | old_issues (issuedate, returndate) | Historie, in der Dienstoberfläche sichtbar |",
-               "", "Passwörter werden nicht übertragen: Benutzerinnen und Benutzer setzen ihr Passwort über "
-               "„Passwort vergessen“ im OPAC neu (Verfahren wird abgestimmt).", ""]
+               "", "Exemplarwerte (Standort, Medientyp, Status) und Benutzergruppen übersetzen die Tabellen in "
+               "`umzug/werte.py`; ein Wert, der dort fehlt, wird ein Klärfall „Wert ohne Zuordnung“.", "",
+               "Passwörter werden nicht übertragen: Benutzerinnen und Benutzer setzen ihr Passwort über "
+               "„Passwort vergessen“ im OPAC neu.", ""]
     return "\n".join(zeilen)
