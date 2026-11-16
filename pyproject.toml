@@ -1,0 +1,16 @@
+[project]
+name = "koha-umzug"
+version = "0.1.0"
+description = "Alephino (MAB2) nach Koha (MARC21): Umwandlung, Laden und Prüfwerkzeuge, die bei der Bibliothek bleiben"
+readme = "README.md"
+license = "AGPL-3.0-only"
+authors = [{ name = "Panagiotis Herbe" }]
+requires-python = ">=3.10"
+# Die Prüfwerkzeuge (umzug.pruefen) brauchen nur die Standardbibliothek; pymarc braucht nur die Umwandlung.
+dependencies = ["pymarc>=5"]
+
+[project.optional-dependencies]
+test = ["pytest>=8"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
