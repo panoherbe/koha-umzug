@@ -1,0 +1,37 @@
+{
+ "quelle": {
+  "titel": 1621,
+  "exemplare": 1882,
+  "personen": 1120,
+  "koerperschaften": 299,
+  "schlagwoerter": 1368,
+  "benutzer": 120,
+  "ausleihen": 91,
+  "ausleihhistorie": 800,
+  "pdf": 40
+ },
+ "ziel": {
+  "titel": 1621,
+  "exemplare": 1881,
+  "personen": 1120,
+  "koerperschaften": 299,
+  "schlagwoerter": 1368,
+  "benutzer": 120,
+  "ausleihen": 90,
+  "ausleihhistorie": 800,
+  "pdf": 40
+ },
+ "weggelassen": {
+  "ausleihen: ohne Benutzer (freigegeben)": 1,
+  "exemplare: ohne Titel (freigegeben)": 1
+ },
+ "klaerfaelle": {
+  "Ausleihe ohne Benutzer": 1,
+  "Barcode doppelt": 1,
+  "Exemplar ohne Titel": 1,
+  "Feld ohne Zuordnung": 1,
+  "Normdatenverknüpfung ins Leere": 2,
+  "Zugangsdatum unbekannt": 5
+ },
+ "nfc_korrigiert": 4272
+}

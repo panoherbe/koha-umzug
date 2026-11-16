@@ -1,0 +1,305 @@
+{
+ "eingespielt": 14,
+ "gefunden": 14,
+ "abweichungen_vorher": 0,
+ "abweichungen_nachher": 40,
+ "faelle": [
+  {
+   "fehler": "Exemplar gelöscht",
+   "werkzeug": "mengen",
+   "bereich": "exemplare",
+   "objekt": "000001053",
+   "gefunden": true,
+   "meldung": "in Koha → fehlt"
+  },
+  {
+   "fehler": "Exemplar am falschen Titel",
+   "werkzeug": "beziehungen",
+   "bereich": "Titel–Exemplar",
+   "objekt": "Exemplar 000000482",
+   "gefunden": true,
+   "meldung": "bei Titel 000000451 → bei Titel 000000001"
+  },
+  {
+   "fehler": "Barcode verändert",
+   "werkzeug": "beziehungen",
+   "bereich": "Barcode",
+   "objekt": "Exemplar 000001272",
+   "gefunden": true,
+   "meldung": "B0001272 → B0001272X"
+  },
+  {
+   "fehler": "Normdatenverknüpfung entfernt",
+   "werkzeug": "beziehungen",
+   "bereich": "Normdaten",
+   "objekt": "Titel 000001313",
+   "gefunden": true,
+   "meldung": "person 000000707 (authid 2413) → Verknüpfung fehlt oder zeigt auf einen anderen Normsatz"
+  },
+  {
+   "fehler": "Verknüpfung auf falschen Normsatz",
+   "werkzeug": "beziehungen",
+   "bereich": "Normdaten",
+   "objekt": "Titel 000000109",
+   "gefunden": true,
+   "meldung": "person 000000815 (authid 2521) → Verknüpfung fehlt oder zeigt auf einen anderen Normsatz"
+  },
+  {
+   "fehler": "Schlagwortsatz gelöscht",
+   "werkzeug": "mengen",
+   "bereich": "schlagwoerter",
+   "objekt": "000000149",
+   "gefunden": true,
+   "meldung": "in Koha → fehlt"
+  },
+  {
+   "fehler": "Fälligkeit verschoben",
+   "werkzeug": "ausleihen",
+   "bereich": "laufende Ausleihe",
+   "objekt": "Exemplar 000001172",
+   "gefunden": true,
+   "meldung": "faellig 2026-10-28 → faellig 2026-11-04"
+  },
+  {
+   "fehler": "Ausleihe beim falschen Benutzer",
+   "werkzeug": "ausleihen",
+   "bereich": "laufende Ausleihe",
+   "objekt": "Exemplar 000000696",
+   "gefunden": true,
+   "meldung": "karte A100037 → karte A100046"
+  },
+  {
+   "fehler": "PDF-Datei fehlt auf dem Server",
+   "werkzeug": "pdf",
+   "bereich": "Erreichbarkeit",
+   "objekt": "Titel 000000505",
+   "gefunden": true,
+   "meldung": "http://127.0.0.1:18080/cgi-bin/koha/opac-retrieve-file.pl?id=6eca34d7aa68b9f0bb040d0dc6d4ea997a69f261 liefert die PDF → HTTP 200, text/html; charset=UTF-8"
+  },
+  {
+   "fehler": "PDF-Datei verändert",
+   "werkzeug": "pdf",
+   "bereich": "Unverändert",
+   "objekt": "Titel 000000991",
+   "gefunden": true,
+   "meldung": "SHA-256 b5e487bf791f… → SHA-256 63af71657160…"
+  },
+  {
+   "fehler": "Interne PDF öffentlich gestellt",
+   "werkzeug": "pdf",
+   "bereich": "Zugriffsrecht",
+   "objekt": "Titel 000000290",
+   "gefunden": true,
+   "meldung": "nur Dienstoberfläche → ohne Anmeldung abrufbar: http://127.0.0.1:18080/cgi-bin/koha/opac-retrieve-file.pl?id=d5d083ab4ff0272d4bb5511528bca1ece13f62a2"
+  },
+  {
+   "fehler": "Umlaut beschädigt (Zeichensatz)",
+   "werkzeug": "beziehungen",
+   "bereich": "Titel und Sonderzeichen",
+   "objekt": "Titel 000001410",
+   "gefunden": true,
+   "meldung": "Evaluation und Optimierung der webbasierten Technologie-Mall für Wasserstoffsystem-Produktion gemäß ISO 9241-11 zur Steigerung von Gebrauchstauglichkeit sowie des Verständnisses industrieller und wissenschaftlicher Inhalte → Evaluation und Optimierung der webbasierten Technologie-Mall fÃ¼r Wasserstoffsystem-Produktion gemäß ISO 9241-11 zur Steigerung von Gebrauchstauglichkeit sowie des Verständnisses industrieller und wissenschaftlicher Inhalte"
+  },
+  {
+   "fehler": "Verknüpfung zum übergeordneten Titel entfernt",
+   "werkzeug": "beziehungen",
+   "bereich": "über-/untergeordnet",
+   "objekt": "Titel 000000794",
+   "gefunden": true,
+   "meldung": "773 $w 000000012 → keine Verknüpfung"
+  },
+  {
+   "fehler": "Benutzer gelöscht",
+   "werkzeug": "mengen",
+   "bereich": "benutzer",
+   "objekt": "A100006",
+   "gefunden": true,
+   "meldung": "in Koha → fehlt"
+  }
+ ],
+ "folgeabweichungen": [
+  {
+   "werkzeug": "beziehungen",
+   "bereich": "Titel–Exemplar",
+   "objekt": "Exemplar 000001053",
+   "erwartet": "bei Titel 000000924",
+   "gefunden": "fehlt in Koha"
+  },
+  {
+   "werkzeug": "beziehungen",
+   "bereich": "Normdaten",
+   "objekt": "Titel 000000752",
+   "erwartet": "schlagwort 000000149",
+   "gefunden": "Normsatz fehlt in Koha"
+  },
+  {
+   "werkzeug": "beziehungen",
+   "bereich": "Normdaten",
+   "objekt": "Titel 000001223",
+   "erwartet": "schlagwort 000000149",
+   "gefunden": "Normsatz fehlt in Koha"
+  },
+  {
+   "werkzeug": "beziehungen",
+   "bereich": "Normdaten",
+   "objekt": "Titel 000000752, Feld 650",
+   "erwartet": "vorhandener Normsatz",
+   "gefunden": "$9 3275 zeigt ins Leere"
+  },
+  {
+   "werkzeug": "beziehungen",
+   "bereich": "Normdaten",
+   "objekt": "Titel 000001223, Feld 650",
+   "erwartet": "vorhandener Normsatz",
+   "gefunden": "$9 3275 zeigt ins Leere"
+  },
+  {
+   "werkzeug": "ausleihen",
+   "bereich": "Historie",
+   "objekt": "Exemplar 000001418",
+   "erwartet": "1× A100006 2018-06-01–2018-07-19",
+   "gefunden": "fehlt"
+  },
+  {
+   "werkzeug": "ausleihen",
+   "bereich": "Historie",
+   "objekt": "Exemplar 000001842",
+   "erwartet": "1× A100006 2019-06-01–2019-08-02",
+   "gefunden": "fehlt"
+  },
+  {
+   "werkzeug": "ausleihen",
+   "bereich": "Historie",
+   "objekt": "Exemplar 000001263",
+   "erwartet": "1× A100006 2020-10-16–2020-11-27",
+   "gefunden": "fehlt"
+  },
+  {
+   "werkzeug": "ausleihen",
+   "bereich": "Historie",
+   "objekt": "Exemplar 000001382",
+   "erwartet": "1× A100006 2020-10-28–2020-11-09",
+   "gefunden": "fehlt"
+  },
+  {
+   "werkzeug": "ausleihen",
+   "bereich": "Historie",
+   "objekt": "Exemplar 000001755",
+   "erwartet": "1× A100006 2021-03-05–2021-05-22",
+   "gefunden": "fehlt"
+  },
+  {
+   "werkzeug": "ausleihen",
+   "bereich": "Historie",
+   "objekt": "Exemplar 000000938",
+   "erwartet": "1× A100006 2021-10-13–2021-10-18",
+   "gefunden": "fehlt"
+  },
+  {
+   "werkzeug": "ausleihen",
+   "bereich": "Historie",
+   "objekt": "Exemplar 000001759",
+   "erwartet": "1× A100006 2022-01-24–2022-03-23",
+   "gefunden": "fehlt"
+  },
+  {
+   "werkzeug": "ausleihen",
+   "bereich": "Historie",
+   "objekt": "Exemplar 000001411",
+   "erwartet": "1× A100006 2022-05-02–2022-05-08",
+   "gefunden": "fehlt"
+  },
+  {
+   "werkzeug": "ausleihen",
+   "bereich": "Historie",
+   "objekt": "Exemplar 000001759",
+   "erwartet": "1× A100006 2025-06-07–2025-06-15",
+   "gefunden": "fehlt"
+  },
+  {
+   "werkzeug": "ausleihen",
+   "bereich": "Historie",
+   "objekt": "Exemplar 000000205",
+   "erwartet": "1× A100006 2026-06-30–2026-07-13",
+   "gefunden": "fehlt"
+  },
+  {
+   "werkzeug": "ausleihen",
+   "bereich": "Historie",
+   "objekt": "Exemplar 000001418",
+   "erwartet": "nicht in Alephino",
+   "gefunden": "1× None 2018-06-01–2018-07-19"
+  },
+  {
+   "werkzeug": "ausleihen",
+   "bereich": "Historie",
+   "objekt": "Exemplar 000001842",
+   "erwartet": "nicht in Alephino",
+   "gefunden": "1× None 2019-06-01–2019-08-02"
+  },
+  {
+   "werkzeug": "ausleihen",
+   "bereich": "Historie",
+   "objekt": "Exemplar 000001263",
+   "erwartet": "nicht in Alephino",
+   "gefunden": "1× None 2020-10-16–2020-11-27"
+  },
+  {
+   "werkzeug": "ausleihen",
+   "bereich": "Historie",
+   "objekt": "Exemplar 000001382",
+   "erwartet": "nicht in Alephino",
+   "gefunden": "1× None 2020-10-28–2020-11-09"
+  },
+  {
+   "werkzeug": "ausleihen",
+   "bereich": "Historie",
+   "objekt": "Exemplar 000001755",
+   "erwartet": "nicht in Alephino",
+   "gefunden": "1× None 2021-03-05–2021-05-22"
+  },
+  {
+   "werkzeug": "ausleihen",
+   "bereich": "Historie",
+   "objekt": "Exemplar 000000938",
+   "erwartet": "nicht in Alephino",
+   "gefunden": "1× None 2021-10-13–2021-10-18"
+  },
+  {
+   "werkzeug": "ausleihen",
+   "bereich": "Historie",
+   "objekt": "Exemplar 000001759",
+   "erwartet": "nicht in Alephino",
+   "gefunden": "1× None 2022-01-24–2022-03-23"
+  },
+  {
+   "werkzeug": "ausleihen",
+   "bereich": "Historie",
+   "objekt": "Exemplar 000001411",
+   "erwartet": "nicht in Alephino",
+   "gefunden": "1× None 2022-05-02–2022-05-08"
+  },
+  {
+   "werkzeug": "ausleihen",
+   "bereich": "Historie",
+   "objekt": "Exemplar 000001759",
+   "erwartet": "nicht in Alephino",
+   "gefunden": "1× None 2025-06-07–2025-06-15"
+  },
+  {
+   "werkzeug": "ausleihen",
+   "bereich": "Historie",
+   "objekt": "Exemplar 000000205",
+   "erwartet": "nicht in Alephino",
+   "gefunden": "1× None 2026-06-30–2026-07-13"
+  },
+  {
+   "werkzeug": "pdf",
+   "bereich": "Zugriffsrecht",
+   "objekt": "Upload 000000290.pdf",
+   "erwartet": "nicht öffentlich",
+   "gefunden": "in Koha öffentlich"
+  }
+ ],
+ "hinweis": "simuliert: Fehler absichtlich eingespielt"
+}

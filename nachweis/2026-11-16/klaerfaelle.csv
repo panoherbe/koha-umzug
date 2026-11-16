@@ -1,0 +1,12 @@
+art;objekt;hinweis;aktion
+Zugangsdatum unbekannt;Exemplar 000000251;Wert „00000000“;übernommen ohne Zugangsdatum
+Zugangsdatum unbekannt;Exemplar 000000554;Wert „00000000“;übernommen ohne Zugangsdatum
+Zugangsdatum unbekannt;Exemplar 000001029;Wert „00000000“;übernommen ohne Zugangsdatum
+Zugangsdatum unbekannt;Exemplar 000001215;Wert „00000000“;übernommen ohne Zugangsdatum
+Zugangsdatum unbekannt;Exemplar 000001281;Wert „00000000“;übernommen ohne Zugangsdatum
+Barcode doppelt;Exemplar 000001825;Barcode B0000816 schon bei Exemplar 000000816;freigegeben: zweites Exemplar erhält Suffix -2, Etikett wird neu gedruckt
+Exemplar ohne Titel;Exemplar 000001882;Titel 999999999 fehlt im Export;freigegeben: weglassen, Liste geht an die Bibliothek
+Feld ohne Zuordnung;Titel 000000431, Feld 078;Inhalt in 500 $a übernommen, Zuordnung festlegen;freigegeben: als Fußnote 500 übernehmen
+Normdatenverknüpfung ins Leere;Titel 000000761, Feld 100;"person 000000931 „Arcioli, Olivier“ fehlt im Export; Ansetzung bleibt als Text";freigegeben: Ansetzung als Text übernehmen, Verknüpfung nachpflegen
+Normdatenverknüpfung ins Leere;Titel 000001165, Feld 100;"person 000000550 „Büttner, Nils“ fehlt im Export; Ansetzung bleibt als Text";freigegeben: Ansetzung als Text übernehmen, Verknüpfung nachpflegen
+Ausleihe ohne Benutzer;Exemplar 000000808;Benutzer 000000999 fehlt im Export;freigegeben: weglassen, Liste geht an die Bibliothek

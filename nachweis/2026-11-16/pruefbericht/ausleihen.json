@@ -1,0 +1,11 @@
+{
+ "werkzeug": "ausleihen",
+ "zeit": "2026-11-16T23:11:11+01:00",
+ "ergebnis": {
+  "geprueft": {
+   "laufend": 90,
+   "historie": 800
+  }
+ },
+ "abweichungen": []
+}

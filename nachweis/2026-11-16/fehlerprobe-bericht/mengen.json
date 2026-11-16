@@ -1,0 +1,116 @@
+{
+ "werkzeug": "mengen",
+ "zeit": "2026-11-16T23:11:22+01:00",
+ "ergebnis": {
+  "bestaende": [
+   {
+    "bestand": "titel",
+    "quelle": 1621,
+    "erwartet": 1621,
+    "koha": 1621,
+    "fehlt": 0,
+    "zusaetzlich": 0,
+    "ok": true
+   },
+   {
+    "bestand": "exemplare",
+    "quelle": 1882,
+    "erwartet": 1881,
+    "koha": 1880,
+    "fehlt": 1,
+    "zusaetzlich": 0,
+    "ok": false
+   },
+   {
+    "bestand": "personen",
+    "quelle": 1120,
+    "erwartet": 1120,
+    "koha": 1120,
+    "fehlt": 0,
+    "zusaetzlich": 0,
+    "ok": true
+   },
+   {
+    "bestand": "koerperschaften",
+    "quelle": 299,
+    "erwartet": 299,
+    "koha": 299,
+    "fehlt": 0,
+    "zusaetzlich": 0,
+    "ok": true
+   },
+   {
+    "bestand": "schlagwoerter",
+    "quelle": 1368,
+    "erwartet": 1368,
+    "koha": 1367,
+    "fehlt": 1,
+    "zusaetzlich": 0,
+    "ok": false
+   },
+   {
+    "bestand": "benutzer",
+    "quelle": 120,
+    "erwartet": 120,
+    "koha": 119,
+    "fehlt": 1,
+    "zusaetzlich": 0,
+    "ok": false
+   },
+   {
+    "bestand": "ausleihen",
+    "quelle": 91,
+    "erwartet": 90,
+    "koha": 90,
+    "fehlt": 0,
+    "zusaetzlich": 0,
+    "ok": true
+   },
+   {
+    "bestand": "ausleihhistorie",
+    "quelle": 800,
+    "erwartet": 800,
+    "koha": 800,
+    "fehlt": 0,
+    "zusaetzlich": 0,
+    "ok": true
+   },
+   {
+    "bestand": "pdf",
+    "quelle": 40,
+    "erwartet": 40,
+    "koha": 40,
+    "fehlt": 0,
+    "zusaetzlich": 0,
+    "ok": true
+   }
+  ],
+  "freigegebene_abweichungen": {
+   "Exemplar ohne Titel": 1,
+   "Ausleihe ohne Benutzer": 1
+  }
+ },
+ "abweichungen": [
+  {
+   "werkzeug": "mengen",
+   "bereich": "exemplare",
+   "objekt": "000001053",
+   "erwartet": "in Koha",
+   "gefunden": "fehlt"
+  },
+  {
+   "werkzeug": "mengen",
+   "bereich": "schlagwoerter",
+   "objekt": "000000149",
+   "erwartet": "in Koha",
+   "gefunden": "fehlt"
+  },
+  {
+   "werkzeug": "mengen",
+   "bereich": "benutzer",
+   "objekt": "A100006",
+   "erwartet": "in Koha",
+   "gefunden": "fehlt"
+  }
+ ]
+}

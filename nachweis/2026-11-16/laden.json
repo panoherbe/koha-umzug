@@ -1,0 +1,20 @@
+{
+ "normdaten": 2787,
+ "verknuepfungen": {
+  "gesetzt": 6388,
+  "ohne_koha_normsatz": 0
+ },
+ "titel": 1621,
+ "exemplare": 1881,
+ "benutzer": 120,
+ "ausleihen": 90,
+ "ausleihhistorie": 800,
+ "pdf": 40,
+ "zuordnungstabellen": {
+  "titel": 1621,
+  "exemplare": 1881,
+  "normdaten": 2787,
+  "benutzer": 120
+ },
+ "dauer_s": 66.6
+}

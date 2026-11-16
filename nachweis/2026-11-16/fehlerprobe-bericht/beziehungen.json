@@ -1,0 +1,98 @@
+{
+ "werkzeug": "beziehungen",
+ "zeit": "2026-11-16T23:11:22+01:00",
+ "ergebnis": {
+  "geprueft": {
+   "exemplare": 1881,
+   "normdatenverknuepfungen": 6388,
+   "hierarchie": 234,
+   "titel_text": 1621
+  },
+  "abweichungen": {
+   "Titel–Exemplar": 2,
+   "Barcode": 1,
+   "Normdaten": 6,
+   "über-/untergeordnet": 1,
+   "Titel und Sonderzeichen": 1
+  }
+ },
+ "abweichungen": [
+  {
+   "werkzeug": "beziehungen",
+   "bereich": "Titel–Exemplar",
+   "objekt": "Exemplar 000000482",
+   "erwartet": "bei Titel 000000451",
+   "gefunden": "bei Titel 000000001"
+  },
+  {
+   "werkzeug": "beziehungen",
+   "bereich": "Titel–Exemplar",
+   "objekt": "Exemplar 000001053",
+   "erwartet": "bei Titel 000000924",
+   "gefunden": "fehlt in Koha"
+  },
+  {
+   "werkzeug": "beziehungen",
+   "bereich": "Barcode",
+   "objekt": "Exemplar 000001272",
+   "erwartet": "B0001272",
+   "gefunden": "B0001272X"
+  },
+  {
+   "werkzeug": "beziehungen",
+   "bereich": "Normdaten",
+   "objekt": "Titel 000000109",
+   "erwartet": "person 000000815 (authid 2521)",
+   "gefunden": "Verknüpfung fehlt oder zeigt auf einen anderen Normsatz"
+  },
+  {
+   "werkzeug": "beziehungen",
+   "bereich": "Normdaten",
+   "objekt": "Titel 000000752",
+   "erwartet": "schlagwort 000000149",
+   "gefunden": "Normsatz fehlt in Koha"
+  },
+  {
+   "werkzeug": "beziehungen",
+   "bereich": "Normdaten",
+   "objekt": "Titel 000001223",
+   "erwartet": "schlagwort 000000149",
+   "gefunden": "Normsatz fehlt in Koha"
+  },
+  {
+   "werkzeug": "beziehungen",
+   "bereich": "Normdaten",
+   "objekt": "Titel 000001313",
+   "erwartet": "person 000000707 (authid 2413)",
+   "gefunden": "Verknüpfung fehlt oder zeigt auf einen anderen Normsatz"
+  },
+  {
+   "werkzeug": "beziehungen",
+   "bereich": "Normdaten",
+   "objekt": "Titel 000000752, Feld 650",
+   "erwartet": "vorhandener Normsatz",
+   "gefunden": "$9 3275 zeigt ins Leere"
+  },
+  {
+   "werkzeug": "beziehungen",
+   "bereich": "Normdaten",
+   "objekt": "Titel 000001223, Feld 650",
+   "erwartet": "vorhandener Normsatz",
+   "gefunden": "$9 3275 zeigt ins Leere"
+  },
+  {
+   "werkzeug": "beziehungen",
+   "bereich": "über-/untergeordnet",
+   "objekt": "Titel 000000794",
+   "erwartet": "773 $w 000000012",
+   "gefunden": "keine Verknüpfung"
+  },
+  {
+   "werkzeug": "beziehungen",
+   "bereich": "Titel und Sonderzeichen",
+   "objekt": "Titel 000001410",
+   "erwartet": "Evaluation und Optimierung der webbasierten Technologie-Mall für Wasserstoffsystem-Produktion gemäß ISO 9241-11 zur Steigerung von Gebrauchstauglichkeit sowie des Verständnisses industrieller und wissenschaftlicher Inhalte",
+   "gefunden": "Evaluation und Optimierung der webbasierten Technologie-Mall fÃ¼r Wasserstoffsystem-Produktion gemäß ISO 9241-11 zur Steigerung von Gebrauchstauglichkeit sowie des Verständnisses industrieller und wissenschaftlicher Inhalte"
+  }
+ ]
+}

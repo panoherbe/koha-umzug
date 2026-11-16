@@ -1,0 +1,41 @@
+{
+ "werkzeug": "pdf",
+ "zeit": "2026-11-16T23:11:28+01:00",
+ "ergebnis": {
+  "geprueft": {
+   "pdf": 40,
+   "oeffentlich": 30,
+   "intern": 10
+  }
+ },
+ "abweichungen": [
+  {
+   "werkzeug": "pdf",
+   "bereich": "Zugriffsrecht",
+   "objekt": "Titel 000000290",
+   "erwartet": "nur Dienstoberfläche",
+   "gefunden": "ohne Anmeldung abrufbar: http://127.0.0.1:18080/cgi-bin/koha/opac-retrieve-file.pl?id=d5d083ab4ff0272d4bb5511528bca1ece13f62a2"
+  },
+  {
+   "werkzeug": "pdf",
+   "bereich": "Erreichbarkeit",
+   "objekt": "Titel 000000505",
+   "erwartet": "http://127.0.0.1:18080/cgi-bin/koha/opac-retrieve-file.pl?id=6eca34d7aa68b9f0bb040d0dc6d4ea997a69f261 liefert die PDF",
+   "gefunden": "HTTP 200, text/html; charset=UTF-8"
+  },
+  {
+   "werkzeug": "pdf",
+   "bereich": "Unverändert",
+   "objekt": "Titel 000000991",
+   "erwartet": "SHA-256 b5e487bf791f…",
+   "gefunden": "SHA-256 63af71657160…"
+  },
+  {
+   "werkzeug": "pdf",
+   "bereich": "Zugriffsrecht",
+   "objekt": "Upload 000000290.pdf",
+   "erwartet": "nicht öffentlich",
+   "gefunden": "in Koha öffentlich"
+  }
+ ]
+}

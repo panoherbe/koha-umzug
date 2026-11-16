@@ -1,0 +1,41 @@
+werkzeug;bereich;objekt;erwartet;gefunden
+mengen;exemplare;000001053;in Koha;fehlt
+mengen;schlagwoerter;000000149;in Koha;fehlt
+mengen;benutzer;A100006;in Koha;fehlt
+beziehungen;Titel–Exemplar;Exemplar 000000482;bei Titel 000000451;bei Titel 000000001
+beziehungen;Titel–Exemplar;Exemplar 000001053;bei Titel 000000924;fehlt in Koha
+beziehungen;Barcode;Exemplar 000001272;B0001272;B0001272X
+beziehungen;Normdaten;Titel 000000109;person 000000815 (authid 2521);Verknüpfung fehlt oder zeigt auf einen anderen Normsatz
+beziehungen;Normdaten;Titel 000000752;schlagwort 000000149;Normsatz fehlt in Koha
+beziehungen;Normdaten;Titel 000001223;schlagwort 000000149;Normsatz fehlt in Koha
+beziehungen;Normdaten;Titel 000001313;person 000000707 (authid 2413);Verknüpfung fehlt oder zeigt auf einen anderen Normsatz
+beziehungen;Normdaten;Titel 000000752, Feld 650;vorhandener Normsatz;$9 3275 zeigt ins Leere
+beziehungen;Normdaten;Titel 000001223, Feld 650;vorhandener Normsatz;$9 3275 zeigt ins Leere
+beziehungen;über-/untergeordnet;Titel 000000794;773 $w 000000012;keine Verknüpfung
+beziehungen;Titel und Sonderzeichen;Titel 000001410;Evaluation und Optimierung der webbasierten Technologie-Mall für Wasserstoffsystem-Produktion gemäß ISO 9241-11 zur Steigerung von Gebrauchstauglichkeit sowie des Verständnisses industrieller und wissenschaftlicher Inhalte;Evaluation und Optimierung der webbasierten Technologie-Mall fÃ¼r Wasserstoffsystem-Produktion gemäß ISO 9241-11 zur Steigerung von Gebrauchstauglichkeit sowie des Verständnisses industrieller und wissenschaftlicher Inhalte
+pdf;Zugriffsrecht;Titel 000000290;nur Dienstoberfläche;ohne Anmeldung abrufbar: http://127.0.0.1:18080/cgi-bin/koha/opac-retrieve-file.pl?id=d5d083ab4ff0272d4bb5511528bca1ece13f62a2
+pdf;Erreichbarkeit;Titel 000000505;http://127.0.0.1:18080/cgi-bin/koha/opac-retrieve-file.pl?id=6eca34d7aa68b9f0bb040d0dc6d4ea997a69f261 liefert die PDF;"HTTP 200, text/html; charset=UTF-8"
+pdf;Unverändert;Titel 000000991;SHA-256 b5e487bf791f…;SHA-256 63af71657160…
+pdf;Zugriffsrecht;Upload 000000290.pdf;nicht öffentlich;in Koha öffentlich
+ausleihen;laufende Ausleihe;Exemplar 000000696;karte A100037;karte A100046
+ausleihen;laufende Ausleihe;Exemplar 000001172;faellig 2026-10-28;faellig 2026-11-04
+ausleihen;Historie;Exemplar 000001418;1× A100006 2018-06-01–2018-07-19;fehlt
+ausleihen;Historie;Exemplar 000001842;1× A100006 2019-06-01–2019-08-02;fehlt
+ausleihen;Historie;Exemplar 000001263;1× A100006 2020-10-16–2020-11-27;fehlt
+ausleihen;Historie;Exemplar 000001382;1× A100006 2020-10-28–2020-11-09;fehlt
+ausleihen;Historie;Exemplar 000001755;1× A100006 2021-03-05–2021-05-22;fehlt
+ausleihen;Historie;Exemplar 000000938;1× A100006 2021-10-13–2021-10-18;fehlt
+ausleihen;Historie;Exemplar 000001759;1× A100006 2022-01-24–2022-03-23;fehlt
+ausleihen;Historie;Exemplar 000001411;1× A100006 2022-05-02–2022-05-08;fehlt
+ausleihen;Historie;Exemplar 000001759;1× A100006 2025-06-07–2025-06-15;fehlt
+ausleihen;Historie;Exemplar 000000205;1× A100006 2026-06-30–2026-07-13;fehlt
+ausleihen;Historie;Exemplar 000001418;nicht in Alephino;1× None 2018-06-01–2018-07-19
+ausleihen;Historie;Exemplar 000001842;nicht in Alephino;1× None 2019-06-01–2019-08-02
+ausleihen;Historie;Exemplar 000001263;nicht in Alephino;1× None 2020-10-16–2020-11-27
+ausleihen;Historie;Exemplar 000001382;nicht in Alephino;1× None 2020-10-28–2020-11-09
+ausleihen;Historie;Exemplar 000001755;nicht in Alephino;1× None 2021-03-05–2021-05-22
+ausleihen;Historie;Exemplar 000000938;nicht in Alephino;1× None 2021-10-13–2021-10-18
+ausleihen;Historie;Exemplar 000001759;nicht in Alephino;1× None 2022-01-24–2022-03-23
+ausleihen;Historie;Exemplar 000001411;nicht in Alephino;1× None 2022-05-02–2022-05-08
+ausleihen;Historie;Exemplar 000001759;nicht in Alephino;1× None 2025-06-07–2025-06-15
+ausleihen;Historie;Exemplar 000000205;nicht in Alephino;1× None 2026-06-30–2026-07-13

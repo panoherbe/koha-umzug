@@ -1,0 +1,166 @@
+{
+ "werkzeug": "ausleihen",
+ "zeit": "2026-11-16T23:11:28+01:00",
+ "ergebnis": {
+  "geprueft": {
+   "laufend": 90,
+   "historie": 800
+  }
+ },
+ "abweichungen": [
+  {
+   "werkzeug": "ausleihen",
+   "bereich": "laufende Ausleihe",
+   "objekt": "Exemplar 000000696",
+   "erwartet": "karte A100037",
+   "gefunden": "karte A100046"
+  },
+  {
+   "werkzeug": "ausleihen",
+   "bereich": "laufende Ausleihe",
+   "objekt": "Exemplar 000001172",
+   "erwartet": "faellig 2026-10-28",
+   "gefunden": "faellig 2026-11-04"
+  },
+  {
+   "werkzeug": "ausleihen",
+   "bereich": "Historie",
+   "objekt": "Exemplar 000001418",
+   "erwartet": "1× A100006 2018-06-01–2018-07-19",
+   "gefunden": "fehlt"
+  },
+  {
+   "werkzeug": "ausleihen",
+   "bereich": "Historie",
+   "objekt": "Exemplar 000001842",
+   "erwartet": "1× A100006 2019-06-01–2019-08-02",
+   "gefunden": "fehlt"
+  },
+  {
+   "werkzeug": "ausleihen",
+   "bereich": "Historie",
+   "objekt": "Exemplar 000001263",
+   "erwartet": "1× A100006 2020-10-16–2020-11-27",
+   "gefunden": "fehlt"
+  },
+  {
+   "werkzeug": "ausleihen",
+   "bereich": "Historie",
+   "objekt": "Exemplar 000001382",
+   "erwartet": "1× A100006 2020-10-28–2020-11-09",
+   "gefunden": "fehlt"
+  },
+  {
+   "werkzeug": "ausleihen",
+   "bereich": "Historie",
+   "objekt": "Exemplar 000001755",
+   "erwartet": "1× A100006 2021-03-05–2021-05-22",
+   "gefunden": "fehlt"
+  },
+  {
+   "werkzeug": "ausleihen",
+   "bereich": "Historie",
+   "objekt": "Exemplar 000000938",
+   "erwartet": "1× A100006 2021-10-13–2021-10-18",
+   "gefunden": "fehlt"
+  },
+  {
+   "werkzeug": "ausleihen",
+   "bereich": "Historie",
+   "objekt": "Exemplar 000001759",
+   "erwartet": "1× A100006 2022-01-24–2022-03-23",
+   "gefunden": "fehlt"
+  },
+  {
+   "werkzeug": "ausleihen",
+   "bereich": "Historie",
+   "objekt": "Exemplar 000001411",
+   "erwartet": "1× A100006 2022-05-02–2022-05-08",
+   "gefunden": "fehlt"
+  },
+  {
+   "werkzeug": "ausleihen",
+   "bereich": "Historie",
+   "objekt": "Exemplar 000001759",
+   "erwartet": "1× A100006 2025-06-07–2025-06-15",
+   "gefunden": "fehlt"
+  },
+  {
+   "werkzeug": "ausleihen",
+   "bereich": "Historie",
+   "objekt": "Exemplar 000000205",
+   "erwartet": "1× A100006 2026-06-30–2026-07-13",
+   "gefunden": "fehlt"
+  },
+  {
+   "werkzeug": "ausleihen",
+   "bereich": "Historie",
+   "objekt": "Exemplar 000001418",
+   "erwartet": "nicht in Alephino",
+   "gefunden": "1× None 2018-06-01–2018-07-19"
+  },
+  {
+   "werkzeug": "ausleihen",
+   "bereich": "Historie",
+   "objekt": "Exemplar 000001842",
+   "erwartet": "nicht in Alephino",
+   "gefunden": "1× None 2019-06-01–2019-08-02"
+  },
+  {
+   "werkzeug": "ausleihen",
+   "bereich": "Historie",
+   "objekt": "Exemplar 000001263",
+   "erwartet": "nicht in Alephino",
+   "gefunden": "1× None 2020-10-16–2020-11-27"
+  },
+  {
+   "werkzeug": "ausleihen",
+   "bereich": "Historie",
+   "objekt": "Exemplar 000001382",
+   "erwartet": "nicht in Alephino",
+   "gefunden": "1× None 2020-10-28–2020-11-09"
+  },
+  {
+   "werkzeug": "ausleihen",
+   "bereich": "Historie",
+   "objekt": "Exemplar 000001755",
+   "erwartet": "nicht in Alephino",
+   "gefunden": "1× None 2021-03-05–2021-05-22"
+  },
+  {
+   "werkzeug": "ausleihen",
+   "bereich": "Historie",
+   "objekt": "Exemplar 000000938",
+   "erwartet": "nicht in Alephino",
+   "gefunden": "1× None 2021-10-13–2021-10-18"
+  },
+  {
+   "werkzeug": "ausleihen",
+   "bereich": "Historie",
+   "objekt": "Exemplar 000001759",
+   "erwartet": "nicht in Alephino",
+   "gefunden": "1× None 2022-01-24–2022-03-23"
+  },
+  {
+   "werkzeug": "ausleihen",
+   "bereich": "Historie",
+   "objekt": "Exemplar 000001411",
+   "erwartet": "nicht in Alephino",
+   "gefunden": "1× None 2022-05-02–2022-05-08"
+  },
+  {
+   "werkzeug": "ausleihen",
+   "bereich": "Historie",
+   "objekt": "Exemplar 000001759",
+   "erwartet": "nicht in Alephino",
+   "gefunden": "1× None 2025-06-07–2025-06-15"
+  },
+  {
+   "werkzeug": "ausleihen",
+   "bereich": "Historie",
+   "objekt": "Exemplar 000000205",
+   "erwartet": "nicht in Alephino",
+   "gefunden": "1× None 2026-06-30–2026-07-13"
+  }
+ ]
+}

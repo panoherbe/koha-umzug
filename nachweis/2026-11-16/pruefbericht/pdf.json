@@ -1,0 +1,13 @@
+{
+ "werkzeug": "pdf",
+ "zeit": "2026-11-16T23:11:11+01:00",
+ "ergebnis": {
+  "geprueft": {
+   "pdf": 40,
+   "oeffentlich": 30,
+   "intern": 10,
+   "intern_mit_anmeldung_geprueft": 10
+  }
+ },
+ "abweichungen": []
+}

@@ -1,0 +1,71 @@
+{
+ "datum": "2026-11-16",
+ "commit": "81b7e5fe51c7f189bd7623c3fc9be563eb5110f1",
+ "arbeitsbaum_sauber": true,
+ "koha": "26.05.05.000 (aus Koha.pm; koha-testing-docker, Image 26.05)",
+ "quelle": {
+  "titel": 1621,
+  "exemplare": 1882,
+  "personen": 1120,
+  "koerperschaften": 299,
+  "schlagwoerter": 1368,
+  "benutzer": 120,
+  "ausleihen": 91,
+  "ausleihhistorie": 800,
+  "pdf": 40
+ },
+ "ziel": {
+  "titel": 1621,
+  "exemplare": 1881,
+  "personen": 1120,
+  "koerperschaften": 299,
+  "schlagwoerter": 1368,
+  "benutzer": 120,
+  "ausleihen": 90,
+  "ausleihhistorie": 800,
+  "pdf": 40
+ },
+ "weggelassen_freigegeben": {
+  "ausleihen: ohne Benutzer (freigegeben)": 1,
+  "exemplare: ohne Titel (freigegeben)": 1
+ },
+ "klaerfaelle": {
+  "Ausleihe ohne Benutzer": 1,
+  "Barcode doppelt": 1,
+  "Exemplar ohne Titel": 1,
+  "Feld ohne Zuordnung": 1,
+  "Normdatenverknüpfung ins Leere": 2,
+  "Zugangsdatum unbekannt": 5
+ },
+ "nfc_korrigiert": 4272,
+ "geladen": {
+  "titel": 1621,
+  "exemplare": 1881,
+  "normdaten": 2787,
+  "benutzer": 120,
+  "ausleihen": 90,
+  "ausleihhistorie": 800,
+  "pdf": 40
+ },
+ "normdatenverknuepfungen": {
+  "gesetzt": 6388,
+  "ohne_koha_normsatz": 0
+ },
+ "laden_s": 76.2,
+ "pruefen_s": 4.7,
+ "abweichungen_nach_umzug": 0,
+ "pdf_geprueft": {
+  "pdf": 40,
+  "oeffentlich": 30,
+  "intern": 10,
+  "intern_mit_anmeldung_geprueft": 10
+ },
+ "fehlerprobe": {
+  "eingespielt": 14,
+  "gefunden": 14,
+  "folgeabweichungen": 26,
+  "hinweis": "simuliert"
+ },
+ "abweichungen_nach_neuladen": 0,
+ "tests": "25 passed in 5.83s"
+}

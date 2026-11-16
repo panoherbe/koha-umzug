@@ -1,0 +1,15 @@
+14 von 14 eingespielten Fehlern gefunden (26 Folgeabweichungen)
+  ✓ Exemplar gelöscht: in Koha → fehlt
+  ✓ Exemplar am falschen Titel: bei Titel 000000451 → bei Titel 000000001
+  ✓ Barcode verändert: B0001272 → B0001272X
+  ✓ Normdatenverknüpfung entfernt: person 000000707 (authid 2413) → Verknüpfung fehlt oder zeigt auf einen anderen Normsatz
+  ✓ Verknüpfung auf falschen Normsatz: person 000000815 (authid 2521) → Verknüpfung fehlt oder zeigt auf einen anderen Normsatz
+  ✓ Schlagwortsatz gelöscht: in Koha → fehlt
+  ✓ Fälligkeit verschoben: faellig 2026-10-28 → faellig 2026-11-04
+  ✓ Ausleihe beim falschen Benutzer: karte A100037 → karte A100046
+  ✓ PDF-Datei fehlt auf dem Server: http://127.0.0.1:18080/cgi-bin/koha/opac-retrieve-file.pl?id=6eca34d7aa68b9f0bb040d0dc6d4ea997a69f261 liefert die PDF → HTTP 200, text/html; charset=UTF-8
+  ✓ PDF-Datei verändert: SHA-256 b5e487bf791f… → SHA-256 63af71657160…
+  ✓ Interne PDF öffentlich gestellt: nur Dienstoberfläche → ohne Anmeldung abrufbar: http://127.0.0.1:18080/cgi-bin/koha/opac-retrieve-file.pl?id=d5d083ab4ff0272d4bb5511528bca1ece13f62a2
+  ✓ Umlaut beschädigt (Zeichensatz): Evaluation und Optimierung der webbasierten Technologie-Mall für Wasserstoffsystem-Produktion gemäß ISO 9241-11 zur Steigerung von Gebrauchstauglichkeit sowie des Verständnisses industrieller und wissenschaftlicher Inhalte → Evaluation und Optimierung der webbasierten Technologie-Mall fÃ¼r Wasserstoffsystem-Produktion gemäß ISO 9241-11 zur Steigerung von Gebrauchstauglichkeit sowie des Verständnisses industrieller und wissenschaftlicher Inhalte
+  ✓ Verknüpfung zum übergeordneten Titel entfernt: 773 $w 000000012 → keine Verknüpfung
+  ✓ Benutzer gelöscht: in Koha → fehlt

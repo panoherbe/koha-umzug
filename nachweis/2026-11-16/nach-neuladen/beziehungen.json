@@ -1,0 +1,14 @@
+{
+ "werkzeug": "beziehungen",
+ "zeit": "2026-11-16T23:12:35+01:00",
+ "ergebnis": {
+  "geprueft": {
+   "exemplare": 1881,
+   "normdatenverknuepfungen": 6388,
+   "hierarchie": 234,
+   "titel_text": 1621
+  },
+  "abweichungen": {}
+ },
+ "abweichungen": []
+}

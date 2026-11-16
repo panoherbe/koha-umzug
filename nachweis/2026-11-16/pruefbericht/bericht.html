@@ -1,0 +1,41 @@
+<!doctype html><html lang="de"><head><meta charset="utf-8"><title>Prüfbericht Koha-Umzug</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>body{font:18px/1.5 "Source Sans 3","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;max-width:940px;
+margin:28px auto;padding:0 20px;color:#1c2529;background:#fff}
+h1{font-size:32px;line-height:1.15;margin:0 0 6px} .zeit{color:#5d6b71;margin-bottom:20px;font-size:16px}
+.gesamt{font-size:22px;font-weight:700;padding:12px 18px;border-radius:6px;margin-bottom:8px}
+.gesamt.ok{background:#e7f4ec;color:#1d5c37} .gesamt.nein{background:#fbe9e7;color:#8c1d18}
+.karte{border:1px solid #d5dfe1;border-radius:6px;padding:14px 20px;margin:16px 0}
+.karte.ok{border-left:8px solid #2e7d4f} .karte.nein{border-left:8px solid #b3261e}
+.urteil{font-weight:700;font-size:21px;margin-bottom:6px} .ok .marke{color:#2e7d4f} .nein .marke{color:#b3261e}
+table{border-collapse:collapse;width:100%;font-size:16px;margin-top:6px}
+td,th{border-bottom:1px solid #e6edef;padding:6px 8px;text-align:left;vertical-align:top;overflow-wrap:anywhere}
+th{color:#5d6b71;font-weight:600;font-size:15px} .zahl{text-align:right;font-variant-numeric:tabular-nums}
+.hinweis{color:#5d6b71;font-size:16px;margin:8px 0 0}</style></head><body>
+<h1>Prüfbericht Koha-Umzug</h1><div class="zeit">Erstellt 16.11.2026, 23:11 · Vergleich mit dem Alephino-Export ·
+maschinenlesbar in den JSON-Dateien daneben</div>
+<div class="gesamt ok">✓ Alles stimmt</div>
+<div class="karte ok" id="mengen"><div class="urteil"><span class="marke">✓</span> Mengenabgleich: alles stimmt</div>
+<table><tr><th>Bestand</th><th class="zahl">in Alephino</th><th class="zahl">erwartet</th><th class="zahl">in Koha</th><th>Ergebnis</th></tr>
+<tr><td>Titel</td><td class="zahl">1.621</td><td class="zahl">1.621</td><td class="zahl">1.621</td><td>✓ vollständig</td></tr>
+<tr><td>Exemplare</td><td class="zahl">1.882</td><td class="zahl">1.881</td><td class="zahl">1.881</td><td>✓ vollständig</td></tr>
+<tr><td>Personen (Normdaten)</td><td class="zahl">1.120</td><td class="zahl">1.120</td><td class="zahl">1.120</td><td>✓ vollständig</td></tr>
+<tr><td>Körperschaften (Normdaten)</td><td class="zahl">299</td><td class="zahl">299</td><td class="zahl">299</td><td>✓ vollständig</td></tr>
+<tr><td>Schlagwörter (Normdaten)</td><td class="zahl">1.368</td><td class="zahl">1.368</td><td class="zahl">1.368</td><td>✓ vollständig</td></tr>
+<tr><td>Benutzer</td><td class="zahl">120</td><td class="zahl">120</td><td class="zahl">120</td><td>✓ vollständig</td></tr>
+<tr><td>laufende Ausleihen</td><td class="zahl">91</td><td class="zahl">90</td><td class="zahl">90</td><td>✓ vollständig</td></tr>
+<tr><td>Ausleihhistorie</td><td class="zahl">800</td><td class="zahl">800</td><td class="zahl">800</td><td>✓ vollständig</td></tr>
+<tr><td>PDF-Dateien</td><td class="zahl">40</td><td class="zahl">40</td><td class="zahl">40</td><td>✓ vollständig</td></tr>
+</table>
+<p class="hinweis">„erwartet“ = Alephino abzüglich der Datensätze, die die Bibliothek als Klärfall zum Weglassen freigegeben hat: Exemplar ohne Titel (1), Ausleihe ohne Benutzer (1)</p>
+</div>
+<div class="karte ok" id="beziehungen"><div class="urteil"><span class="marke">✓</span> Titel, Exemplare und Normdaten: alles stimmt</div>
+<table><tr><td>Exemplare am richtigen Titel</td><td class="zahl">1.881 geprüft</td></tr><tr><td>Normdatenverknüpfungen</td><td class="zahl">6.388 geprüft</td></tr><tr><td>Bände mit ihrer Reihe</td><td class="zahl">234 geprüft</td></tr><tr><td>Titel Zeichen für Zeichen</td><td class="zahl">1.621 geprüft</td></tr></table>
+</div>
+<div class="karte ok" id="pdf"><div class="urteil"><span class="marke">✓</span> Titel und PDF-Dateien: alles stimmt</div>
+<table><tr><td>PDF-Verknüpfungen</td><td class="zahl">40 geprüft</td></tr><tr><td>davon öffentlich abrufbar und unverändert</td><td class="zahl">30 geprüft</td></tr><tr><td>davon nur intern</td><td class="zahl">10 geprüft</td></tr><tr><td>intern mit Anmeldung geprüft</td><td class="zahl">10 geprüft</td></tr></table>
+</div>
+<div class="karte ok" id="ausleihen"><div class="urteil"><span class="marke">✓</span> Benutzer und Ausleihen: alles stimmt</div>
+<table><tr><td>laufende Ausleihen</td><td class="zahl">90 geprüft</td></tr><tr><td>Einträge der Ausleihhistorie</td><td class="zahl">800 geprüft</td></tr></table>
+</div>
+</body></html>
