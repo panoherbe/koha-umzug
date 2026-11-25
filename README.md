@@ -1,9 +1,17 @@
 # koha-umzug
 
-**Bibliotheken ziehen geprüft zu Koha um. koha-umzug bringt den Bestand aus Alephino in Koha, die freie
-Bibliothekssoftware: Titel, Exemplare, Normdaten, Benutzer, Ausleihen und PDF-Dateien. Danach vergleichen vier
-Prüfwerkzeuge jeden Datensatz mit dem alten Bestand, und sie bleiben bei der Bibliothek. Freie Software, die heute
-läuft: gemessen in der Testumgebung an einem Beispielbestand in Koha 26.05.**
+**Bibliotheken ziehen geprüft zu Koha um, der freien Bibliothekssoftware.**
+
+koha-umzug bringt den Bestand aus Alephino in Koha: Titel, Exemplare, Normdaten, Benutzer, Ausleihen und PDF-Dateien.
+Danach vergleichen vier Prüfwerkzeuge jeden Datensatz mit dem alten Bestand, und sie bleiben bei der Bibliothek. Freie
+Software, die heute läuft: gemessen in der Testumgebung an einem Beispielbestand in Koha 26.05.
+
+**Auf einen Blick:** ① Export des alten Systems lesen → ② Felder zuordnen, Datenfehler als Klärfälle entscheiden →
+③ in Koha laden → ④ jeden Datensatz vergleichen → ⑤ Prüfbericht: alles angekommen.
+
+**Für wen:** Bibliotheken, die zu Koha wechseln möchten, gerade kleinere, Schul- und Spezialbibliotheken ohne eigene
+IT-Abteilung, und alle, die sie dabei begleiten. Heute liest koha-umzug Alephino-Exporte in MAB2, erprobt an einem nachgebildeten
+Export; Vorlagen für weitere Systeme und die Formate MARC21, MARCXML und Tabellen sind die nächsten Schritte.
 
 ![Rundgang in sechs Szenen: Suche im Koha-Katalog, ein Titel mit Exemplar, Schlagwörtern und PDF, ein Zeitschriftenheft mit seiner Zeitschrift, laufende Ausleihen und Ausleihhistorie einer Benutzerin in der Dienstoberfläche, der Prüfbericht ohne Abweichung, der Prüfbericht nach 14 absichtlich eingebauten Fehlern](medien/rundgang.gif)
 
@@ -11,10 +19,6 @@ läuft: gemessen in der Testumgebung an einem Beispielbestand in Koha 26.05.**
 Bewegtes Bild oben: 4,2 MB.
 [Video herunterladen (MP4, 3,3 MB)](https://github.com/panoherbe/koha-umzug/raw/main/medien/rundgang.mp4)
 · Text des Rundgangs weiter unten.</sub>
-
-**Für wen:** Bibliotheken, die von Alephino zu Koha wechseln möchten, gerade kleinere und Spezialbibliotheken ohne
-eigene IT-Abteilung, und alle, die sie dabei begleiten. Andere Systeme, die MAB2 oder MARC21 ausgeben, passen mit
-einer eigenen Feldzuordnung ebenso.
 
 <p align="center">
   <img src="medien/rundgang-2-titel.png" width="49%" alt="Ein Titel im Koha-Katalog: „Typobiografie : Arbeiten aus 60 Jahren / Jost Hochuli“; Verfasser und Schlagwörter verlinkt, unter Online-Ressourcen der Link „Volltext (PDF)“, unten das Exemplar mit Standort und Signatur">
@@ -25,6 +29,18 @@ einer eigenen Feldzuordnung ebenso.
 
 <sub>Bilder aus dem Rundgang vom 17.11.2026: ein Titel, die Ausleihhistorie, der Prüfbericht nach dem Umzug und nach
 der Fehlerprobe.</sub>
+
+## Warum es koha-umzug braucht
+
+Kurz: Viele kleine Bibliotheken möchten wechseln; der Umzug selbst ist die Hürde, und genau dort setzt koha-umzug an.
+
+- In einer Umfrage der Arbeitsgemeinschaften der Spezial- sowie der Kunst- und Museumsbibliotheken (ASpB, AKMB) unter
+  136 Bibliotheken planen 41 Prozent einen Systemwechsel; über 90 Prozent sehen Bedarf an Hilfe gegen Qualitätsverlust
+  bei Datenmigrationen ([Auswertung, 2026](https://aspb.de/files/2026/08/auswertung-umfrage-aspb-akmb-lokalsysteme.pdf)).
+- 4.796 von 6.727 Öffentlichen Bibliotheken der Deutschen Bibliotheksstatistik 2024 arbeiten ohne hauptamtliches
+  Personal ([DBS 2024](https://hbz.opus.hbz-nrw.de/files/556/PDFA_dbs_gesamt_engl_2024.pdf)).
+- Selbst die KIT-Bibliothek brauchte für ihren Wechsel zu Koha vier Testmigrationen
+  ([BiblioCon 2024](https://opus4.kobv.de/opus4-bib-info/files/19135/BiblioCon2024_Koha_KITBibliothek.pdf)).
 
 ## Was nach dem Umzug stimmt
 
@@ -65,8 +81,8 @@ Python 3.11, Ubuntu 24.04: Python 3.12), sonst genügt `apt install python3`.
 Alle vier schreiben zusammen `abweichungen.csv` und `bericht.html`
 ([Bericht nach dem Umzug](nachweis/2026-11-17/pruefbericht/bericht.html),
 [Bericht nach der Fehlerprobe](nachweis/2026-11-17/fehlerprobe-bericht/bericht.html); auf GitHub über „Raw“ als Datei
-laden und im Browser öffnen). Rückgabewert 0 heißt: keine Abweichung. So laufen sie auch nach dem Umzug, zum Beispiel
-nach jedem Koha-Update. In der Testumgebung lesen sie Koha über den Container (`--container`), auf einem Koha-Server
+laden und im Browser öffnen). Rückgabewert 0 heißt: keine Abweichung. Für Prüfungen im laufenden Betrieb, etwa nach einem Koha-Update, kommen
+die Abgleiche als gespeicherte SQL-Berichte (nächste Schritte). In der Testumgebung lesen sie Koha über den Container (`--container`), auf einem Koha-Server
 über `--sql "sudo koha-mysql INSTANZ"`, nur lesend; dort sind sie noch nicht gemessen.
 
 Gelernt beim Messen: Koha antwortet auf den Abruf einer fehlenden Datei mit HTTP 200 und einer Hinweisseite. Das
@@ -143,46 +159,49 @@ im Video weniger Spalten als Koha von sich aus (Tabelleneinstellungen der Dienst
 
 </details>
 
-## Was der Prototyp noch nicht ist
+## Stand heute und nächste Schritte
 
-Kurz: ein laufender, gemessener Anfang mit Beispieldaten; für Ihren Bestand kommen Ihre Felder und Ihre Entscheidungen
-dazu.
+Kurz: ein laufender, gemessener Anfang mit Beispieldaten. Die nächsten Schritte bringen ihn zu echten Bibliotheken.
 
-- **Beispieldaten, keine echte Alephino-Installation.** Der Export ist nachgebildet: echte Katalogdaten der Deutschen
-  Nationalbibliothek, umgesetzt in MAB2 im Zeilenformat von Alephino; Exemplare, Benutzer, Ausleihen und PDF-Dateien
-  sind simuliert. Ein echter Export hat eigene Felder, Codes und Sonderfälle; die Feldzuordnung wird daran angepasst.
-- **Ein kleiner Bestand.** 1.621 Titel. Die Prüfwerkzeuge lesen je Tabelle mit einer Abfrage; wie lange Laden und
-  Prüfen bei einem großen Bestand dauern, ist nicht gemessen.
-- **Laden ist heute nur für die Testumgebung eingerichtet;** auf einem Server laufen bisher die Prüfwerkzeuge (nicht
-  gemessen). Auf einem Koha-Server liegen die Koha-Werkzeuge an anderer Stelle, und Arbeits- und Upload-Ordner
-  brauchen andere Rechte.
-- **Ausleihen kommen per SQL** in Koha, ebenso die Einträge der PDF-Dateien; so bleiben Ausleih- und Rückgabedatum aus
-  Alephino erhalten. Ob sich ein übernommenes Exemplar danach in Koha zurückbuchen und verlängern lässt, prüft noch
-  kein automatischer Test.
-- **Passwörter** kommen nicht mit. Benutzerinnen und Benutzer vergeben sie über „Passwort vergessen“ neu.
+**Heute:**
+
+- **Beispieldaten:** Der Alephino-Export ist nachgebildet, aus echten Katalogdaten der Deutschen Nationalbibliothek,
+  umgesetzt in MAB2 im Zeilenformat von Alephino; Exemplare, Benutzer, Ausleihen und PDF-Dateien sind simuliert. Ein
+  echter Export bringt eigene Felder, Codes und Sonderfälle mit; dafür wird die Feldzuordnung angepasst.
+- **Bestand:** gemessen mit 1.621 Titeln. Die Prüfwerkzeuge lesen je Tabelle mit einer Abfrage; Messungen an großen
+  Beständen folgen mit den Probeumzügen.
+- **Laden:** eingerichtet für die Testumgebung; die Prüfwerkzeuge sind für Koha-Server vorbereitet (`--sql`), dort
+  aber noch nicht erprobt. Auf einem Server liegen die Koha-Werkzeuge an anderer Stelle, und Arbeits- und Upload-Ordner brauchen
+  andere Rechte.
+- **Ausleihen** kommen per SQL in Koha, ebenso die Einträge der PDF-Dateien; so bleiben Ausleih- und Rückgabedatum aus
+  Alephino erhalten. Zurückbuchen und Verlängern eines übernommenen Exemplars deckt noch kein automatischer Test ab.
+- **Passwörter** kommen nicht mit; Benutzerinnen und Benutzer vergeben sie über „Passwort vergessen“ neu.
 - **Ausleihhistorie und alle Benutzerkonten** wandern heute immer mit.
-- **Suchindex:** gemessen mit Zebra, dem Standard der Testumgebung; Elasticsearch ist noch nicht geprüft.
+- **Suchindex:** gemessen mit Zebra, dem Standard der Testumgebung.
 
-## Wie es weitergeht
+**Als Nächstes:**
 
-Kurz: Geplant, noch nicht gebaut. Ziel ist, dass eine Bibliothek ohne IT-Abteilung ihren Umzug selbst vorbereiten und
-prüfen kann.
+1. Die Feldzuordnung als bearbeitbare Tabelle statt Code, mit Vorlagen je Altsystem und Beispielen aus den eigenen
+   Daten.
+2. Weitere Quellen: MARC21- und MARCXML-Exporte anderer Systeme; Exemplare aus Tabellen, wo ein MARC-Export sie nicht
+   enthält.
+3. Ein Umzugsassistent im Browser, der bei der Bibliothek läuft: Export ablegen, Klärfälle entscheiden, Probelauf,
+   Prüfbericht; ohne Kommandozeile.
+4. Die wichtigsten Abgleiche als gespeicherte SQL-Berichte in der Dienstoberfläche von Koha, ohne Installation und für
+   jedes spätere Update; Laden auf normalen Koha-Servern mit Elasticsearch.
+5. Datensparsam: Ausleihhistorie und alte Benutzerkonten wandern nur mit, wenn die Bibliothek es ausdrücklich
+   entscheidet.
+6. Probeumzüge mit den echten Exporten von drei Bibliotheken, auf deren eigenen Rechnern; zu mir kommen nur
+   Prüfberichte ohne Personendaten.
+7. Version 1.0 mit Messbericht aus den Probeumzügen.
 
-- Die Feldzuordnung als Tabelle statt Code, mit Vorlagen je Altsystem und Beispielen aus den eigenen Daten.
-- Weitere Quellen: MARC21- und MARCXML-Exporte anderer Systeme und Bestandslisten als Tabelle.
-- Ein Umzugsassistent im Browser, der bei der Bibliothek läuft: Export ablegen, Klärfälle entscheiden, Probelauf,
-  Prüfbericht; ohne Kommandozeile.
-- Die wichtigsten Abgleiche als Koha-Plugin in der Dienstoberfläche, auch für spätere Updates; Laden auf einem
-  Koha-Server und Elasticsearch, nicht nur die Testumgebung.
-- Datensparsam: Ausleihhistorie und alte Benutzerkonten wandern nur mit, wenn die Bibliothek es ausdrücklich entscheidet.
+## Mitmachen und Kontakt
 
-**Mitmachen:** Probieren Sie den Weg mit dem Beispielbestand aus. Rückmeldungen, Fragen und Felder Ihres Exports, die
-hier noch fehlen, gern als Issue auf GitHub oder über [panoherbe.com](https://www.panoherbe.com). Bitte keine echten
-Benutzerdaten hochladen.
+Probieren Sie den Weg mit dem Beispielbestand aus. Bibliotheken, die einen Probeumzug machen möchten, melden sich gern,
+ebenso alle mit Rückmeldungen, Fragen oder Feldern ihres Exports, die hier noch fehlen: als Issue auf GitHub oder über
+[panoherbe.com](https://www.panoherbe.com). Bitte keine echten Benutzerdaten hochladen.
 
-## Kontakt
-
-[panoherbe.com](https://www.panoherbe.com) · Panagiotis Herbe
+Panagiotis Herbe
 
 ---
 
