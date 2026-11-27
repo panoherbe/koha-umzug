@@ -13,6 +13,7 @@ def test_beurteilen():
     assert beurteilen("ISBN 783161484101").art == "pruefziffer"
     assert (beurteilen("ISBN 0317-8471").art, beurteilen("ISBN 0317-8471").wert) == ("issn", "0317-8471")
     assert beurteilen("ISBN 3-16-1484").art == "unvollstaendig"
+    assert beurteilen("ISBN 0317-8472").art == "issn-falsch"
 
 
 def isbn_satz(nr: str, isbn: str, ind: str = "  ") -> Satz:
@@ -44,6 +45,8 @@ def test_isbn_vertippt_und_unvollstaendig_bleiben_klaerfaelle():
     assert [k.art for k in erg.klaerfaelle] == ["ISBN vertippt"] and erg.record["020"]["z"] == "ISBN 3-16-148410-1"
     erg = u.titel(isbn_satz("000000006", "ISBN 3-16-1484"))
     assert [k.art for k in erg.klaerfaelle] == ["ISBN unvollständig"]
+    erg = u.titel(isbn_satz("000000007", "ISBN 0317-8472"))
+    assert [k.art for k in erg.klaerfaelle] == ["ISSN vertippt"] and erg.record["022"]["y"] == "0317-8472"
 
 
 def test_band_ohne_eigenen_titel_bekommt_den_titel_seines_werks():

@@ -32,11 +32,12 @@ Findings without a rule stop the conversion with exit code 2: the files are stil
     Hauptsachtitel fehlt             record kept with „[ohne Titel]“ (a volume whose work is in the export takes the
                                      work's title instead, no Klärfall)
     ISBN vertippt / unvollständig    record kept, the number in 020 $z (invalid ISBN)
+    ISSN vertippt                    record kept, the number in 022 $y (incorrect ISSN)
+    PDF-Datei fehlt                  title kept, without 856
+    Normsatz ohne Ansetzung          authority record left out
 
 Done without a decision and counted in protokoll.json „automatisch“ (umzug/isbn.py): an ISBN field with only the word
 „ISBN“, a missing leading 9 of 978, an ISSN in the ISBN field (to 022), a volume titled with its work.
-    PDF-Datei fehlt                  title kept, without 856
-    Normsatz ohne Ansetzung          authority record left out
 """
 from __future__ import annotations
 

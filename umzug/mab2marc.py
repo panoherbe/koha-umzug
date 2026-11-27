@@ -258,6 +258,10 @@ class Umsetzer:
             elif u.art == "issn":
                 erg.automatisch["ISSN aus dem ISBN-Feld"] += 1
                 rec.add_field(Field(tag="022", indicators=[" ", " "], subfields=[Subfield("a", u.wert)]))
+            elif u.art == "issn-falsch":
+                erg.klaerfaelle.append(Klaerfall("ISSN vertippt", f"Titel {sysno}, Feld 540", f"„{text}“: Prüfziffer passt nicht",
+                                                 "übernommen als fehlerhafte ISSN (022 $y)"))
+                rec.add_field(Field(tag="022", indicators=[" ", " "], subfields=[Subfield("y", u.wert)]))
             else:
                 art = "ISBN vertippt" if u.art == "pruefziffer" else "ISBN unvollständig"
                 erg.klaerfaelle.append(Klaerfall(art, f"Titel {sysno}, Feld 540", f"„{text}“ ({len(isbn_ziffern(text))} Stellen)",

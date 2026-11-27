@@ -1,12 +1,13 @@
-"""ISBN field (MAB 540) checks, the same rules as the Probe-Check on panoherbe.com (src/lib/koha-probe/isbn.ts).
+"""ISBN field (MAB 540) checks, the same rules as the Probe-Check on panoherbe.com/projekte/koha-umzug/ausprobieren.
 
-Since 2026-11-27, after a real check report of a school library (MAB2 diskette format): many ISBN fields hold only the
-word „ISBN“, some miss the leading 9 of 978, some hold an ISSN. What needs no decision is done automatically and
-counted; what needs one stays a Klärfall:
+Since 2026-11-27. Common patterns in MAB2 exports of small libraries: many ISBN fields hold only the word „ISBN“, some
+miss the leading 9 of 978, some hold an ISSN. What needs no decision is done automatically and counted; what needs one
+stays a Klärfall:
 
     leer           only the word „ISBN“ („ISBN keine vorh.“) or only a price: no 020, the rest of the text in 020 $c
     neun-ergaenzt  twelve digits starting 783/784, and „9“ + digits is a valid ISBN-13: 020 $a with the 9
-    issn           an ISSN (NNNN-NNN[NX]) in the ISBN field: 022 $a
+    issn           an ISSN (NNNN-NNN[NX]) in the ISBN field: 022 $a; with a wrong check digit 022 $y and Klärfall
+                   „ISSN vertippt“
     pruefziffer    right length, wrong check digit: Klärfall „ISBN vertippt“, kept in 020 $z (invalid ISBN)
     unvollstaendig too few or too many digits: Klärfall „ISBN unvollständig“, kept in 020 $z
 """
@@ -24,7 +25,7 @@ WORT = re.compile(r"^\s*IS[BS]N\s*:?\s*", re.I)
 
 @dataclass
 class Urteil:
-    art: str            # ok | leer | neun-ergaenzt | issn | pruefziffer | unvollstaendig
+    art: str            # ok | leer | neun-ergaenzt | issn | issn-falsch | pruefziffer | unvollstaendig
     wert: str = ""      # the ISBN or ISSN to write; for leer the leftover text (price, binding) or ""
 
 
@@ -59,7 +60,8 @@ def beurteilen(feld: str) -> Urteil:
     d = ziffern(ohne_preis)
     m = ISSN.search(ohne_preis)
     if m and len(d) < 10:
-        return Urteil("issn", f"{m[1]}-{m[2].upper()}")
+        issn = f"{m[1]}-{m[2].upper()}"
+        return Urteil("issn" if issn_ok(issn.replace("-", "")) else "issn-falsch", issn)
     if not d:
         rest = WORT.sub("", feld).strip()
         return Urteil("leer", "" if re.match(r"(?i)^(keine|ohne|o\.)", rest) else rest)
