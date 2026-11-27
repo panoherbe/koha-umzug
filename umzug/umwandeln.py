@@ -29,7 +29,12 @@ Findings without a rule stop the conversion with exit code 2: the files are stil
     Normsatzfeld ohne Zuordnung      content kept as a note 667 in the authority record
     Normdatenverknüpfung ins Leere   name kept as text, without link
     Übergeordneter Titel fehlt       record kept, without 773
-    Hauptsachtitel fehlt             record kept with „[ohne Titel]“
+    Hauptsachtitel fehlt             record kept with „[ohne Titel]“ (a volume whose work is in the export takes the
+                                     work's title instead, no Klärfall)
+    ISBN vertippt / unvollständig    record kept, the number in 020 $z (invalid ISBN)
+
+Done without a decision and counted in protokoll.json „automatisch“ (umzug/isbn.py): an ISBN field with only the word
+„ISBN“, a missing leading 9 of 978, an ISSN in the ISBN field (to 022), a volume titled with its work.
     PDF-Datei fehlt                  title kept, without 856
     Normsatz ohne Ansetzung          authority record left out
 """
@@ -89,6 +94,7 @@ def umwandeln(export: Path, ziel: Path, freigaben: Path | None, opac_url: str, d
     klaer: list[Klaerfall] = []
     weg: Counter[str] = Counter()
     nfc = 0
+    auto: Counter[str] = Counter()
 
     norm_ids = {art: {s.sysno for s in saetze} for art, saetze in ex.normen.items()}
     titel_ids = {s.sysno for s in ex.titel}
@@ -171,6 +177,7 @@ def umwandeln(export: Path, ziel: Path, freigaben: Path | None, opac_url: str, d
         for s in ex.titel:
             erg = u.titel(s)
             nfc += erg.nfc_korrigiert
+            auto += erg.automatisch
             klaer += [fg.pruefen(k) for k in erg.klaerfaelle]
             rec = erg.record
             exemplare = nach_titel.get(s.sysno, [])
@@ -244,6 +251,7 @@ def umwandeln(export: Path, ziel: Path, freigaben: Path | None, opac_url: str, d
         "klaerfaelle": dict(sorted(Counter(k.art for k in klaer).items())),
         "offen": [vars(k) for k in fg.offen],
         "nfc_korrigiert": nfc,
+        "automatisch": dict(sorted(auto.items())),
     }
     (ziel / "protokoll.json").write_text(json.dumps(protokoll, ensure_ascii=False, indent=1) + "\n")
     return protokoll

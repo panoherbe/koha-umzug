@@ -99,7 +99,7 @@ git clone https://github.com/panoherbe/koha-umzug.git && cd koha-umzug
 pip install pymarc pytest
 python daten/nachbilden.py                     # baut den Beispiel-Export (wenige Sekunden)
 python -m umzug umwandeln beispiel/export beispiel/koha --freigaben beispiel/freigaben.json
-python -m pytest -q                             # 33 Tests
+python -m pytest -q                             # 37 Tests
 ```
 
 `beispiel/koha/klaerfaelle.csv` zeigt danach jeden Datenfehler mit der Entscheidung aus `freigaben.json`. Ohne
@@ -133,6 +133,11 @@ Kurz: Feldzuordnung, Klärfälle, Messung und Prüfbericht liegen offen.
   [Messprotokoll](nachweis/2026-11-17/PROTOKOLL.md): doppelter Barcode, Exemplar ohne Titel, Ausleihe ohne Benutzer,
   Verknüpfung ins Leere, Feld ohne Zuordnung, unbekanntes Zugangsdatum. Unterfelder und Werte ohne Zuordnung prüfen
   die Tests.
+- **ISBN und mehrbändige Werke** (seit 27.11.2026, [`umzug/isbn.py`](umzug/isbn.py)): Ein ISBN-Feld, in dem nur das
+  Wort „ISBN“ steht, braucht keine Entscheidung; fehlt vorne die 9 von 978 und bestätigt die Prüfziffer die
+  Ergänzung, wird sie ergänzt; eine ISSN im ISBN-Feld kommt ins ISSN-Feld. Das zählt `protokoll.json` unter
+  „automatisch“. Vertippte und unvollständige ISBN bleiben Klärfälle und stehen als ungültige ISBN im Datensatz. Ein
+  Band ohne eigenen Titel bekommt den Titel seines Werks. Der Beispiel-Umzug ergibt damit dieselben Dateien wie vorher.
 - **Die Messung ist wiederholbar:** ein Befehl lädt, prüft, beschädigt Koha absichtlich, prüft wieder, lädt neu und
   schreibt das Protokoll; jede Zahl darin kommt aus den Dateien des Laufs.
 

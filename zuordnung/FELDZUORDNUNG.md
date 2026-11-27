@@ -9,7 +9,7 @@ Erzeugt aus `umzug/mab2marc.py` (`python -m umzug zuordnung`); Code und Tabelle 
 | 001 |  | 001 / 035 | Alephino-Systemnummer: 001 unverändert, 035 „(ALEPHINO)nnn“ |
 | 002 | a | 008/00-05 | Datum der Ersterfassung |
 | 010 | a | 773 0_ $t $w | übergeordneter Datensatz: Titel und Systemnummer; Koha verlinkt über 001 |
-| 089 | a | 245 $n, 773 $g | Bandangabe des untergeordneten Titels |
+| 089 | a | 245 $n, 773 $g | Bandangabe des untergeordneten Titels; ein Band ohne eigenen Titel (oder nur mit einer Bandzahl in 331) bekommt in 245 $a den Titel des übergeordneten Satzes |
 | 025 | a | 016 7_ $a $2 DE-101 | Nummer der Deutschen Nationalbibliothek, falls vorhanden |
 | 037 | b | 041 $a, 008/35-37 | Sprache |
 | 100, 104 … 196 | p, 9, 4 | 100 1_ / 700 1_ ($a, $e, $0, $4) | Personen; erste Verfasserin oder erster Verfasser in 100; $e = Rolle auf Deutsch (Tabelle unten) |
@@ -27,7 +27,7 @@ Erzeugt aus `umzug/mab2marc.py` (`python -m umzug zuordnung`); Code und Tabelle 
 | 433 | a | 300 $a | Umfang |
 | 451 | a | 490 $a | Gesamttitel |
 | 455 | a | 490 $v | Bandangabe zum Gesamttitel |
-| 540 | a | 020 $a | ISBN |
+| 540 | a | 020 $a | ISBN; nur das Wort „ISBN“ → kein 020, fehlende 9 von 978 ergänzt, ISSN → 022, ungültige ISBN → 020 $z (umzug/isbn.py) |
 | 542 | a | 022 $a | ISSN |
 | 655 | u | 856 $u | Elektronische Adresse (Web) |
 

@@ -24,6 +24,7 @@ What the conversion does beyond copying fields:
 """
 from __future__ import annotations
 
+import re
 import unicodedata
 from collections import Counter
 from dataclasses import dataclass, field
@@ -31,6 +32,7 @@ from dataclasses import dataclass, field
 from pymarc import Field, Leader, Record, Subfield
 
 from .alephino import Feld, Satz, datum
+from .isbn import beurteilen, ziffern as isbn_ziffern
 
 QUELLE = "ALEPHINO"
 PRAEFIX_NORM = {"person": "ALEPHINO-PER", "koerperschaft": "ALEPHINO-KOE", "schlagwort": "ALEPHINO-SW"}
@@ -51,6 +53,8 @@ class Ergebnis:
     record: Record
     klaerfaelle: list[Klaerfall] = field(default_factory=list)
     nfc_korrigiert: int = 0
+    # done without a decision, counted for protokoll.json „automatisch“ (since 2026-11-27, see isbn.py)
+    automatisch: Counter[str] = field(default_factory=Counter)
 
 
 def nfc(text: str) -> tuple[str, bool]:
@@ -83,7 +87,8 @@ EINFACH = [
     ("433", "a", "300", "  ", "a", "Umfang"),
     ("451", "a", "490", "0 ", "a", "Gesamttitel"),
     ("455", "a", "490", "0 ", "v", "Bandangabe zum Gesamttitel"),
-    ("540", "a", "020", "  ", "a", "ISBN"),
+    ("540", "a", "020", "  ", "a", "ISBN; nur das Wort „ISBN“ → kein 020, fehlende 9 von 978 ergänzt, ISSN → 022, "
+                                    "ungültige ISBN → 020 $z (umzug/isbn.py)"),
     ("542", "a", "022", "  ", "a", "ISSN"),
     ("655", "u", "856", "40", "u", "Elektronische Adresse (Web)"),
 ]
@@ -91,7 +96,8 @@ BESONDERS = [
     ("001", "", "001 / 035", "Alephino-Systemnummer: 001 unverändert, 035 „(ALEPHINO)nnn“"),
     ("002", "a", "008/00-05", "Datum der Ersterfassung"),
     ("010", "a", "773 0_ $t $w", "übergeordneter Datensatz: Titel und Systemnummer; Koha verlinkt über 001"),
-    ("089", "a", "245 $n, 773 $g", "Bandangabe des untergeordneten Titels"),
+    ("089", "a", "245 $n, 773 $g", "Bandangabe des untergeordneten Titels; ein Band ohne eigenen Titel (oder nur mit "
+                                   "einer Bandzahl in 331) bekommt in 245 $a den Titel des übergeordneten Satzes"),
     ("025", "a", "016 7_ $a $2 DE-101", "Nummer der Deutschen Nationalbibliothek, falls vorhanden"),
     ("037", "b", "041 $a, 008/35-37", "Sprache"),
     ("100, 104 … 196", "p, 9, 4", "100 1_ / 700 1_ ($a, $e, $0, $4)",
@@ -115,6 +121,15 @@ ROLLEN = {"aut": "Verfasser", "edt": "Herausgeber", "isb": "Herausgebendes Organ
 # ISBD: the separator that ends a subfield, by the code of the subfield that follows (MARC21 practice)
 ISBD = {"245": {"b": " :", "n": ".", "p": ".", "c": " /"}, "264": {"a": " ;", "b": " :", "c": ","},
         "490": {"v": " ;"}}
+
+
+NUR_BAND = re.compile(r"(?i)^(?:(?:Band|Bd|Bde|Teil|Tl|T|Vol|Heft|H|Folge|Lieferung|Lfg|Abt|Abteilung)\.?\s*"
+                      r"(?:\d{1,4}|[IVXLC]{1,7})|\d{1,3}|[IVXLC]{1,7})\s*[.,;:]?$")
+
+
+def nur_band(titel: str) -> bool:
+    """„3“, „Bd. 3“, „Teil 2“, „XI.“: a title that is only a volume number (not „1984“, not „Buch 3“)."""
+    return bool(NUR_BAND.match(titel.strip()))
 
 
 def isbd(f: Field) -> Field:
@@ -223,6 +238,32 @@ class Umsetzer:
                 for c, v in rest:
                     notieren(f"{f.tag} ${c}", v)
 
+    def _isbn(self, s: Satz, rec: Record, erg: Ergebnis, sysno: str) -> None:
+        """MAB 540 → 020 / 022 by the rules in isbn.py; indicator „z“ (no ISBN, binding or price only) → 020 $c."""
+        for f in s.felder_von("540"):
+            text = self._t(f.get("a") or "", erg)
+            if not text:
+                continue
+            u = beurteilen(text) if f.ind[:1] != "z" else None
+            if u is None or u.art == "leer":
+                rest = text if u is None else u.wert
+                erg.automatisch["ISBN-Feld ohne Nummer"] += 1
+                if rest:
+                    rec.add_field(Field(tag="020", indicators=[" ", " "], subfields=[Subfield("c", rest)]))
+            elif u.art == "ok":
+                rec.add_field(Field(tag="020", indicators=[" ", " "], subfields=[Subfield("a", text)]))
+            elif u.art == "neun-ergaenzt":
+                erg.automatisch["ISBN: fehlende 9 ergänzt"] += 1
+                rec.add_field(Field(tag="020", indicators=[" ", " "], subfields=[Subfield("a", u.wert)]))
+            elif u.art == "issn":
+                erg.automatisch["ISSN aus dem ISBN-Feld"] += 1
+                rec.add_field(Field(tag="022", indicators=[" ", " "], subfields=[Subfield("a", u.wert)]))
+            else:
+                art = "ISBN vertippt" if u.art == "pruefziffer" else "ISBN unvollständig"
+                erg.klaerfaelle.append(Klaerfall(art, f"Titel {sysno}, Feld 540", f"„{text}“ ({len(isbn_ziffern(text))} Stellen)",
+                                                 "übernommen als ungültige ISBN (020 $z)"))
+                rec.add_field(Field(tag="020", indicators=[" ", " "], subfields=[Subfield("z", text)]))
+
     def _link(self, art: str, nummer: str | None, tag: str, erg: Ergebnis, sysno: str, name: str) -> list[Subfield]:
         if not nummer:
             return []
@@ -275,6 +316,15 @@ class Umsetzer:
             rec.add_field(Field(tag=tag, indicators=["2", " "], subfields=sub))
 
         titel = s.wert("331", "a")
+        oben = s.wert("010", "a")
+        band = s.wert("089", "a")
+        # a volume of a multi-volume work: no own title, or only a number („3“, „Bd. 3“, „XI.“); its work is in the
+        # export → 245 $a = title of the work, $n = volume (089, else the number from 331); no Klärfall
+        werk = self.titel_namen.get(oben) if oben else None
+        if werk and (not titel or nur_band(titel)):
+            band = band or titel
+            titel = werk
+            erg.automatisch["Band mit dem Titel seines Werks"] += 1
         if not titel:
             erg.klaerfaelle.append(Klaerfall("Hauptsachtitel fehlt", f"Titel {sysno}", "kein Feld 331",
                                              "übernommen mit Titel „[ohne Titel]“"))
@@ -283,7 +333,7 @@ class Umsetzer:
         sub245 = [Subfield("a", titel)]
         if (zusatz := s.wert("335", "a")):
             sub245.append(Subfield("b", nichtsortier(self._t(zusatz, erg, roh=True))[0]))
-        if (band := s.wert("089", "a")):
+        if band:
             sub245.append(Subfield("n", self._t(band, erg)))
         if (verantw := s.wert("359", "a")):
             sub245.append(Subfield("c", self._t(verantw, erg)))
@@ -291,6 +341,9 @@ class Umsetzer:
 
         for mab, code, marc, ind, mcode, _ in EINFACH:
             if mab in ("335", "359"):
+                continue
+            if mab == "540":
+                self._isbn(s, rec, erg, sysno)          # at its place in the rules, so the field order stays
                 continue
             werte = [self._t(f.get(code) or "", erg) for f in s.felder_von(mab) if f.get(code)]
             for w in werte:
@@ -306,7 +359,7 @@ class Umsetzer:
         for f in rec.get_fields("264", "490"):
             isbd(f)
 
-        if (oben := s.wert("010", "a")):
+        if oben:
             if oben not in self.titel_ids:
                 erg.klaerfaelle.append(Klaerfall("Übergeordneter Titel fehlt", f"Titel {sysno}",
                                                  f"Feld 010 zeigt auf {oben}, der nicht im Export ist",
