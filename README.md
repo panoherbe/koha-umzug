@@ -1,34 +1,56 @@
-# koha-umzug
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="medien/wortmarke-dunkel.svg">
+    <img src="medien/wortmarke-hell.svg" width="460" alt="koha-umzug">
+  </picture>
+</p>
 
-**Bibliotheken ziehen geprüft zu Koha um, der freien Bibliothekssoftware.**
+<p align="center"><b>Bibliotheken ziehen geprüft zu Koha um, der freien Bibliothekssoftware.</b></p>
 
-koha-umzug bringt den Bestand aus Alephino in Koha: Titel, Exemplare, Normdaten, Benutzer, Ausleihen und PDF-Dateien.
-Danach vergleichen vier Prüfwerkzeuge jeden Datensatz mit dem alten Bestand, und sie bleiben bei der Bibliothek. Freie
-Software, die heute läuft: gemessen in der Testumgebung an einem Beispielbestand in Koha 26.05.
+<p align="center">
+  <a href="https://github.com/panoherbe/koha-umzug/actions/workflows/tests.yml"><img alt="Tests" src="https://github.com/panoherbe/koha-umzug/actions/workflows/tests.yml/badge.svg"></a>
+  <a href="https://github.com/panoherbe/koha-umzug/releases"><img alt="Version" src="https://img.shields.io/github/v/release/panoherbe/koha-umzug?label=Version&color=a8481f"></a>
+  <a href="LICENSE"><img alt="Lizenz: AGPL-3.0" src="https://img.shields.io/badge/Lizenz-AGPL--3.0--only-a8481f"></a>
+  <img alt="Koha 26.05" src="https://img.shields.io/badge/Koha-26.05-a8481f">
+</p>
+
+<p align="center">
+  <a href="https://www.panoherbe.com/projekte/koha-umzug/ausprobieren">Export im Browser prüfen</a> ·
+  <a href="#in-zwei-minuten-selbst-prüfen">Selbst ausprobieren</a> ·
+  <a href="#was-nach-dem-umzug-stimmt">Gemessen</a> ·
+  <a href="#rundgang">Rundgang</a> ·
+  <a href="#fahrplan-2027">Fahrplan 2027</a> ·
+  <a href="#mitmachen-und-kontakt">Mitmachen</a> ·
+  <a href="https://www.panoherbe.com/projekte/koha-umzug">Projektseite mit Video</a>
+</p>
+
+![Vorher und nachher: links ein Auszug eines Titels im Alephino-Export (Format MAB2), dann derselbe Titel im Katalog von Koha mit Verfasser, Schlagwörtern und Exemplar, dann der Prüfbericht nach dem Umzug: alles stimmt](medien/vorher-nachher.gif)
+
+<sub>Vorher und nachher aus dem Messlauf vom 17.11.2026 in der Testumgebung: ein Titel im nachgebildeten
+Alephino-Export (Auszug), derselbe Titel in Koha 26.05 und der Prüfbericht. Katalogdaten echt (Deutsche Nationalbibliothek,
+CC0); Exemplare, Benutzer und Ausleihen **simuliert**.</sub>
+
+## In 30 Sekunden
+
+- **Was:** koha-umzug bringt den Bestand einer Bibliothek aus ihrem alten Programm nach Koha: Titel, Exemplare,
+  Normdaten, Benutzer, Ausleihen und PDF-Dateien. Danach vergleichen vier Prüfwerkzeuge jeden Datensatz mit dem alten
+  Bestand. Jeder Datenfehler wird ein **Klärfall**, den die Bibliothek entscheidet; nichts verschwindet still.
+- **Für wen:** Bibliotheken, die zu Koha wechseln möchten, gerade kleinere, Schul- und Spezialbibliotheken ohne eigene
+  IT-Abteilung, und alle, die sie dabei begleiten.
+- **Heute:** liest Exporte aus Alephino (einem älteren Bibliothekssystem) im Format MAB2, erprobt an einem
+  nachgebildeten Export und gemessen in der Testumgebung mit Koha 26.05. Das Umwandeln aus weiteren Systemen und aus
+  MARC21, MARCXML und Tabellen ist [für 2027 geplant](#fahrplan-2027).
+- **Probierseite:** Schon vor dem Umzug lässt sich der Export des eigenen Programms
+  [im Browser prüfen](https://www.panoherbe.com/projekte/koha-umzug/ausprobieren): Sie zeigt, wie viele Titel und
+  Exemplare darin stecken und was vorher zu klären ist. Sie liest Tabellen (CSV), MAB2 oder MARC21, auch als XML. Die
+  Datei bleibt auf dem Rechner, die Seite sendet nichts davon. Mit Beispieldaten ausprobierbar. Die Probierseite
+  zählt und prüft nur; umwandeln kann koha-umzug heute MAB2 aus Alephino.
+- **Stand:** Version 0.1.1, gemessen am 17.11.2026 in der Testumgebung.
 
 **Auf einen Blick:** ① Export des alten Systems lesen → ② Felder zuordnen, Datenfehler als Klärfälle entscheiden →
 ③ in Koha laden → ④ jeden Datensatz vergleichen → ⑤ Prüfbericht: alles angekommen.
 
-**Für wen:** Bibliotheken, die zu Koha wechseln möchten, gerade kleinere, Schul- und Spezialbibliotheken ohne eigene
-IT-Abteilung, und alle, die sie dabei begleiten. Heute liest koha-umzug Alephino-Exporte in MAB2, erprobt an einem nachgebildeten
-Export; Vorlagen für weitere Systeme und die Formate MARC21, MARCXML und Tabellen sind die nächsten Schritte.
-
-![Rundgang in sechs Szenen: Suche im Koha-Katalog, ein Titel mit Exemplar, Schlagwörtern und PDF, ein Zeitschriftenheft mit seiner Zeitschrift, laufende Ausleihen und Ausleihhistorie einer Benutzerin in der Dienstoberfläche, der Prüfbericht ohne Abweichung, der Prüfbericht nach 14 absichtlich eingebauten Fehlern](medien/rundgang.gif)
-
-<sub>Rundgang: 79 Sekunden, sechs Szenen, ohne Ton; aufgenommen am 17.11.2026 in der Testumgebung des Messlaufs.
-Bewegtes Bild oben: 4,2 MB.
-[Video herunterladen (MP4, 3,3 MB)](https://github.com/panoherbe/koha-umzug/raw/main/medien/rundgang.mp4)
-· Text des Rundgangs weiter unten.</sub>
-
-<p align="center">
-  <img src="medien/rundgang-2-titel.png" width="49%" alt="Ein Titel im Koha-Katalog: „Typobiografie : Arbeiten aus 60 Jahren / Jost Hochuli“; Verfasser und Schlagwörter verlinkt, unter Online-Ressourcen der Link „Volltext (PDF)“, unten das Exemplar mit Standort und Signatur">
-  <img src="medien/rundgang-4-historie.png" width="49%" alt="Ausleihhistorie einer Benutzerin in der Dienstoberfläche: zurückgegebene Ausleihen mit Ausleih- und Rückgabedatum">
-  <img src="medien/rundgang-5-pruefbericht.png" width="49%" alt="Prüfbericht nach dem Umzug: „Alles stimmt“, Mengenabgleich je Bestand mit den Zahlen aus Alephino, erwartet und in Koha">
-  <img src="medien/rundgang-6-fehlerprobe.png" width="49%" alt="Prüfbericht nach der Fehlerprobe: rot markiert, unter anderem ein fehlendes Exemplar, ein fehlender Schlagwortsatz und ein fehlender Benutzer">
-</p>
-
-<sub>Bilder aus dem Rundgang vom 17.11.2026: ein Titel, die Ausleihhistorie, der Prüfbericht nach dem Umzug und nach
-der Fehlerprobe.</sub>
+Fachwörter wie MAB2, MARC21, Normdaten oder Exemplar erklärt die [Wörterliste](#wörter-kurz-erklärt) am Ende.
 
 ## Warum es koha-umzug braucht
 
@@ -63,7 +85,7 @@ PDF-Dateien sind **simuliert**.
 | Laden | PDF-Dateien hängen am Titel | als Koha-Upload, Byte für Byte unverändert; öffentlich oder nur für das Personal | 40 Dateien, 30 öffentlich, 10 intern; Prüfsummen gleich |
 | Prüfen | Belegt, dass alles stimmt | vier Prüfwerkzeuge (unten), ein Bericht zum Lesen und einer für Programme | 0 Abweichungen, geprüft in 4,7 s |
 | Prüfen | Die Prüfung ist selbst geprüft | Fehlerprobe: Koha absichtlich an 14 Stellen beschädigt, jede Stelle anders | 14 von 14 gefunden (simuliert), dazu 26 Folgemeldungen |
-| Prüfen | Wiederholbar | automatische Tests ohne Koha; der ganze Messlauf mit einem Befehl | 33 von 33 Tests bestanden |
+| Prüfen | Wiederholbar | automatische Tests ohne Koha; der ganze Messlauf mit einem Befehl | 33 von 33 Tests bestanden (heute 37) |
 
 ## Die vier Prüfwerkzeuge
 
@@ -81,16 +103,19 @@ Python 3.11, Ubuntu 24.04: Python 3.12), sonst genügt `apt install python3`.
 Alle vier schreiben zusammen `abweichungen.csv` und `bericht.html`
 ([Bericht nach dem Umzug](nachweis/2026-11-17/pruefbericht/bericht.html),
 [Bericht nach der Fehlerprobe](nachweis/2026-11-17/fehlerprobe-bericht/bericht.html); auf GitHub über „Raw“ als Datei
-laden und im Browser öffnen). Rückgabewert 0 heißt: keine Abweichung. Für Prüfungen im laufenden Betrieb, etwa nach einem Koha-Update, kommen
-die Abgleiche als gespeicherte SQL-Berichte (nächste Schritte). In der Testumgebung lesen sie Koha über den Container (`--container`), auf einem Koha-Server
-über `--sql "sudo koha-mysql INSTANZ"`, nur lesend; dort sind sie noch nicht gemessen.
+laden und im Browser öffnen). Rückgabewert 0 heißt: keine Abweichung. Für Prüfungen im laufenden Betrieb, etwa nach
+einem Koha-Update, sind die Abgleiche als gespeicherte SQL-Berichte [geplant](#fahrplan-2027). In der Testumgebung
+lesen sie Koha über den Container (`--container`), auf einem Koha-Server über `--sql "sudo koha-mysql INSTANZ"`, nur
+lesend; dort sind sie noch nicht gemessen.
 
 Gelernt beim Messen: Koha antwortet auf den Abruf einer fehlenden Datei mit HTTP 200 und einer Hinweisseite. Das
 Werkzeug prüft deshalb den Inhalt (beginnt er mit `%PDF`, stimmt die Prüfsumme), nicht nur die Antwort des Servers.
 
 ## In zwei Minuten selbst prüfen
 
-Kurz: Umwandlung und Tests laufen ohne Koha; für den ganzen Weg startet ein Skript Koha 26.05 auf Ihrem Rechner.
+Kurz: Umwandlung und Tests laufen ohne Koha; für den ganzen Weg startet ein Skript Koha 26.05 auf Ihrem Rechner. Nur
+den eigenen Export ansehen geht ohne Installation auf der
+[Probierseite](https://www.panoherbe.com/projekte/koha-umzug/ausprobieren).
 
 Ohne Koha (Python 3.10 oder neuer):
 
@@ -141,6 +166,27 @@ Kurz: Feldzuordnung, Klärfälle, Messung und Prüfbericht liegen offen.
 - **Die Messung ist wiederholbar:** ein Befehl lädt, prüft, beschädigt Koha absichtlich, prüft wieder, lädt neu und
   schreibt das Protokoll; jede Zahl darin kommt aus den Dateien des Laufs.
 
+## Rundgang
+
+Kurz: 79 Sekunden durch Katalog, Dienstoberfläche und Prüfbericht nach dem Umzug, ohne Ton, mit Untertiteln.
+
+![Rundgang in sechs Szenen: Suche im Koha-Katalog, ein Titel mit Exemplar, Schlagwörtern und PDF, ein Zeitschriftenheft mit seiner Zeitschrift, laufende Ausleihen und Ausleihhistorie einer Benutzerin in der Dienstoberfläche, der Prüfbericht ohne Abweichung, der Prüfbericht nach 14 absichtlich eingebauten Fehlern](medien/rundgang.gif)
+
+<sub>Rundgang: 79 Sekunden, sechs Szenen, ohne Ton; aufgenommen am 17.11.2026 in der Testumgebung des Messlaufs.
+Bewegtes Bild oben: 4,2 MB.
+[Video herunterladen (MP4, 3,3 MB)](https://github.com/panoherbe/koha-umzug/raw/main/medien/rundgang.mp4)
+· [im Player auf der Projektseite](https://www.panoherbe.com/projekte/koha-umzug#video).</sub>
+
+<p align="center">
+  <img src="medien/rundgang-2-titel.png" width="49%" alt="Ein Titel im Koha-Katalog: „Typobiografie : Arbeiten aus 60 Jahren / Jost Hochuli“; Verfasser und Schlagwörter verlinkt, unter Online-Ressourcen der Link „Volltext (PDF)“, unten das Exemplar mit Standort und Signatur">
+  <img src="medien/rundgang-4-historie.png" width="49%" alt="Ausleihhistorie einer Benutzerin in der Dienstoberfläche: zurückgegebene Ausleihen mit Ausleih- und Rückgabedatum">
+  <img src="medien/rundgang-5-pruefbericht.png" width="49%" alt="Prüfbericht nach dem Umzug: „Alles stimmt“, Mengenabgleich je Bestand mit den Zahlen aus Alephino, erwartet und in Koha">
+  <img src="medien/rundgang-6-fehlerprobe.png" width="49%" alt="Prüfbericht nach der Fehlerprobe: rot markiert, unter anderem ein fehlendes Exemplar, ein fehlender Schlagwortsatz und ein fehlender Benutzer">
+</p>
+
+<sub>Bilder aus dem Rundgang vom 17.11.2026: ein Titel, die Ausleihhistorie, der Prüfbericht nach dem Umzug und nach
+der Fehlerprobe.</sub>
+
 ## Text des Rundgangs
 
 <details>
@@ -164,11 +210,9 @@ im Video weniger Spalten als Koha von sich aus (Tabelleneinstellungen der Dienst
 
 </details>
 
-## Stand heute und nächste Schritte
+## Stand heute
 
-Kurz: ein laufender, gemessener Anfang mit Beispieldaten. Die nächsten Schritte bringen ihn zu echten Bibliotheken.
-
-**Heute:**
+Kurz: ein laufender, gemessener Anfang mit Beispieldaten. Der Fahrplan unten bringt ihn zu echten Bibliotheken.
 
 - **Beispieldaten:** Der Alephino-Export ist nachgebildet, aus echten Katalogdaten der Deutschen Nationalbibliothek,
   umgesetzt in MAB2 im Zeilenformat von Alephino; Exemplare, Benutzer, Ausleihen und PDF-Dateien sind simuliert. Ein
@@ -184,29 +228,57 @@ Kurz: ein laufender, gemessener Anfang mit Beispieldaten. Die nächsten Schritte
 - **Ausleihhistorie und alle Benutzerkonten** wandern heute immer mit.
 - **Suchindex:** gemessen mit Zebra, dem Standard der Testumgebung.
 
-**Als Nächstes:**
+Alle Fassungen mit ihren Änderungen: [Releases](https://github.com/panoherbe/koha-umzug/releases).
 
-1. Die Feldzuordnung als bearbeitbare Tabelle statt Code, mit Vorlagen je Altsystem und Beispielen aus den eigenen
-   Daten.
-2. Weitere Quellen: MARC21- und MARCXML-Exporte anderer Systeme; Exemplare aus Tabellen, wo ein MARC-Export sie nicht
-   enthält.
-3. Ein Umzugsassistent im Browser, der bei der Bibliothek läuft: Export ablegen, Klärfälle entscheiden, Probelauf,
-   Prüfbericht; ohne Kommandozeile.
-4. Die wichtigsten Abgleiche als gespeicherte SQL-Berichte in der Dienstoberfläche von Koha, ohne Installation und für
-   jedes spätere Update; Laden auf normalen Koha-Servern mit Elasticsearch.
-5. Datensparsam: Ausleihhistorie und alte Benutzerkonten wandern nur mit, wenn die Bibliothek es ausdrücklich
-   entscheidet.
-6. Probeumzüge mit den echten Exporten von drei Bibliotheken, auf deren eigenen Rechnern; zu mir kommen nur
-   Prüfberichte ohne Personendaten.
-7. Version 1.0 mit Messbericht aus den Probeumzügen.
+## Fahrplan 2027
+
+Kurz: Sechs Schritte von Juni bis November 2027, je Monat Arbeit am Werkzeug und Arbeit mit Bibliotheken; etwa die
+Hälfte der Zeit gehört den Bibliotheken. Geplant, noch nicht gebaut; jeder Schritt hat ein
+[Issue mit dem Label „Fahrplan 2027“](https://github.com/panoherbe/koha-umzug/issues?q=label%3A%22Fahrplan+2027%22),
+in dem Hinweise, Fragen und Felder aus echten Exporten willkommen sind.
+
+| Geplant ab | Am Werkzeug | Mit Bibliotheken |
+|---|---|---|
+| Juni 2027 | Die Feldzuordnung als bearbeitbare Tabelle statt Code, mit Vorlagen je Altsystem und Beispielen aus den eigenen Daten | Gespräche mit zehn Bibliotheken; den Fahrplan vorstellen in der Mailingliste koha-de und im Forum bibcourse |
+| Juli 2027 | Weitere Quellen: MARC21- und MARCXML-Exporte anderer Systeme; Exemplare aus Tabellen, wo ein MARC-Export sie nicht enthält | erster Probeumzug mit einem echten Export, auf dem Rechner der Bibliothek |
+| August 2027 | Ein Umzugsassistent im Browser, der bei der Bibliothek läuft: Export ablegen, Klärfälle entscheiden, Probelauf, Prüfbericht; ohne Kommandozeile | zwei weitere Probeumzüge |
+| September 2027 | Die wichtigsten Abgleiche als gespeicherte SQL-Berichte in der Dienstoberfläche; Laden auf normalen Koha-Servern mit Elasticsearch; Ausleihhistorie und alte Benutzerkonten nur auf ausdrückliche Entscheidung | Rückmeldungen aus den Probeumzügen einarbeiten |
+| Oktober 2027 | Docker-Paket mit Anleitung | Handreichung „Umzug nach Koha prüfen“ in einfacher Sprache mit Landesfachstellen; kurze Videos; Vortrag bei der Tagung der ASpB |
+| November 2027 | Version 1.0 | Messbericht aus drei Probeumzügen (Ziel: kein Datensatz still verloren, jede Abweichung ein Klärfall) |
+
+Bei den Probeumzügen bleiben die Daten bei der Bibliothek; zu mir kommen nur Prüfberichte ohne Personendaten.
 
 ## Mitmachen und Kontakt
 
-Probieren Sie den Weg mit dem Beispielbestand aus. Bibliotheken, die einen Probeumzug machen möchten, melden sich gern,
-ebenso alle mit Rückmeldungen, Fragen oder Feldern ihres Exports, die hier noch fehlen: als Issue auf GitHub oder über
-[panoherbe.com](https://www.panoherbe.com). Bitte keine echten Benutzerdaten hochladen.
+Kurz: Bibliotheken, die einen Probeumzug machen möchten, und alle mit Rückmeldungen sind willkommen.
+
+- **Probeumzug oder Frage:** schreiben Sie mir über
+  [panoherbe.com](https://www.panoherbe.com/projekte/koha-umzug#kontakt) oder an kontakt@panoherbe.com.
+- **Etwas melden oder vorschlagen:** als [Issue](https://github.com/panoherbe/koha-umzug/issues), etwa Felder Ihres
+  Exports, die hier noch fehlen. Bitte keine echten Benutzerdaten hochladen. Wie Sie Tests starten und was ein Beitrag
+  braucht: [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
 Panagiotis Herbe
+
+## Wörter, kurz erklärt
+
+| Wort | Bedeutung hier |
+|---|---|
+| Koha | Freie Bibliothekssoftware, weltweit verbreitet, ohne Lizenzkosten; Katalog für die Lesenden und Dienstoberfläche für das Personal. |
+| Alephino | Ein älteres Bibliothekssystem für kleine und Spezialbibliotheken, aus dem koha-umzug heute liest. |
+| Export | Die Datei, die ein Bibliotheksprogramm über „Export“ ausgibt: der ganze Bestand in einem Austauschformat. |
+| MAB2, MARC21, MARCXML | Austauschformate für Katalogdaten: MAB2 ist das ältere deutsche Format, MARC21 das internationale, das Koha nutzt; MARCXML ist MARC21 als XML. |
+| Titel, Exemplar | Der Titel ist das Werk im Katalog; ein Exemplar ist das einzelne Buch im Regal, mit Barcode und Signatur (dem Standortzeichen). |
+| Normdaten, Normsatz | Ein Eintrag für eine Person, eine Körperschaft oder ein Schlagwort, auf den viele Titel verweisen; so bleibt „Hochuli, Jost“ überall derselbe. |
+| Klärfall | Ein Datenfehler oder eine Lücke im Export, etwa ein doppelter Barcode. Die Bibliothek entscheidet, was damit geschieht; vorher wird nichts geladen. |
+| Prüfbericht | Vergleicht nach dem Umzug jeden Datensatz in Koha mit dem Export und nennt jede Abweichung. |
+| Fehlerprobe | Koha wird in der Testumgebung absichtlich beschädigt, um zu zeigen, dass der Prüfbericht die Fehler findet (simuliert). |
+| Testumgebung | Ein Koha auf dem eigenen Rechner, gestartet aus dem offiziellen Entwicklungs-Container der Koha-Gemeinschaft; ohne Risiko für den Betrieb. |
+| Dienstoberfläche | Der Teil von Koha für das Personal: Ausleihe, Benutzer, Berichte. |
+| SQL-Bericht | Eine gespeicherte Abfrage, die Koha in der Dienstoberfläche auf Knopfdruck ausführt. |
+| Zebra, Elasticsearch | Suchmaschinen, die Koha für die Katalogsuche nutzen kann. |
+| simuliert | Erfunden oder nachgebildet: Exemplare, Benutzer, Ausleihen, PDF-Dateien und die eingebauten Fehler; die Katalogdaten selbst sind echt. |
+| AGPL-3.0 | Freie Lizenz: Jede Bibliothek, jeder Verbund und Dienstleister darf das Werkzeug nutzen, ändern und weitergeben. |
 
 ---
 
@@ -216,12 +288,12 @@ Kurz: Python 3, eine Bibliothek für MARC (pymarc) und die Werkzeuge von Koha, a
 
 | | |
 |---|---|
-| Umwandlung | `umzug/umwandeln.py`, `umzug/mab2marc.py`: Python 3.10+, pymarc; schreibt MARC21 (UTF-8, NFC), CSV und JSON; Werttabellen für Standort, Medientyp, Status und Benutzergruppe in `umzug/werte.py` |
+| Umwandlung | `umzug/umwandeln.py`, `umzug/mab2marc.py`: Python 3.10+, pymarc; schreibt MARC21 (UTF-8, NFC), CSV und JSON; Werttabellen für Standort, Medientyp, Status und Benutzergruppe in `umzug/werte.py`; ISBN, ISSN und Bandsätze in `umzug/isbn.py` |
 | Laden | `umzug/laden.py`, nur Testumgebung (`--container`): `bulkmarcimport.pl` und `import_patrons.pl` über `koha-shell`; laufende Ausleihen, Historie und die Einträge der PDF-Uploads per SQL über `koha-mysql`, die PDF-Dateien selbst in den Upload-Ordner; verweigert das Laden bei offenen Klärfällen; bricht ab, wenn ein Werkzeug, der Suchindex oder der Neustart von Plack scheitert |
 | Prüfen | `umzug/pruefen/`: nur Python-Standardbibliothek; liest Koha über `koha-mysql` (nur lesen) und über HTTP; Testumgebung `--container`, Koha-Server `--sql` (dort nicht gemessen) |
 | Fehlerprobe | `umzug/fehlerprobe.py`: nur für Testumgebungen, ändert Daten |
 | Testumgebung | `koha/testumgebung.sh`: koha-testing-docker der Koha-Gemeinschaft (Commit `ef7f1f9`), Koha `v26.05.05-1`, Ports nur auf 127.0.0.1. Die Images `koha/koha-testing:26.05` und `mariadb:10.11` sind Tags, die sich ändern können; das Image des Messlaufs steht mit Digest in `nachweis/2026-11-17/testumgebung.txt` |
-| Tests | `python -m pytest -q`; GitHub Actions bei jedem Push mit Python 3.10 und 3.12 |
+| Tests | `python -m pytest -q` (heute 37 Tests); GitHub Actions bei jedem Push mit Python 3.10 und 3.12 |
 | Daten | `daten/dnb/`: Titel- und Normdaten der Deutschen Nationalbibliothek, geholt mit `daten/holen.py`; `daten/nachbilden.py` baut daraus den Export, gleiche Eingabe ergibt gleiche Bytes |
 
 Befehle:
@@ -244,3 +316,5 @@ python -m umzug zuordnung
   @example.org), Ausleihen, PDF-Dateien und die eingebauten Datenfehler.
 - **Koha:** Koha-Gemeinschaft, GPL-3.0-or-later. **koha-testing-docker:** Koha-Gemeinschaft, GPL-3.0. Beide werden
   von `koha/testumgebung.sh` geholt und sind nicht Teil dieses Repositorys.
+- **Wortmarke und Vorschaubilder** in `medien/`: aus Albert Sans und IBM Plex Mono (SIL Open Font License 1.1)
+  gesetzt; Vorher-Nachher aus den Bildern des Messlaufs.

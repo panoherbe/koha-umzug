@@ -1,6 +1,6 @@
 [project]
 name = "koha-umzug"
-version = "0.1.0"
+version = "0.1.1"
 description = "Alephino (MAB2) nach Koha (MARC21): Umwandlung, Laden und Prüfwerkzeuge, die bei der Bibliothek bleiben"
 readme = "README.md"
 license = "AGPL-3.0-only"
